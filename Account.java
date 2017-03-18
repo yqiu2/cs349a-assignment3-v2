@@ -52,6 +52,7 @@ public class Account implements AccountInt {
 		}
 	}
 
+	// 2) sending and receiving money between clients
 	public void receiveMoney(int amount, String senderIP) {
 		System.out.println("You've received $" + amount + " from " + senderIP + ": ");
 		balance += amount;
@@ -65,7 +66,8 @@ public class Account implements AccountInt {
 				int r = 5000 + (int) (Math.random() * 50000);
 				// amount transferred
 				int m = 1 + (int) (Math.random() * balance);
-				if (m < 0) m = 0;
+				if (m < 0)
+					m = 0;
 				int p = -1;
 				String recipientIP;
 				AccountInt recipientStub;
@@ -86,13 +88,40 @@ public class Account implements AccountInt {
 		}
 	}
 
-	// 2) leader election
+	// 3) leader election
+
+	//PLZ CHECK LOGIC
+	public int sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
+		if (startCommunication) {
+			while (!leaderConfirmed) {
+				//DID I DO THIS RIGHT?
+				Account recipientStub = (Account)neighborStubs.get(numMessagesPassed);
+				
+				// parses to int, replaces all punctuation, creates a substring of
+				// the last three characters so that IPs are comparable :p
+				int candidateInt = Integer.parseInt(candidate.replaceAll("[^a-zA-Z ]", "")
+						.substring(candidate.length() - 3, candidate.length()));
+				int runnerUp = Integer.parseInt(neighborIPs.get(numMessagesPassed).replaceAll("[^a-zA-Z ]", "")
+						.substring(neighborIPs.get(numMessagesPassed).length() - 3, neighborIPs.get(numMessagesPassed).length()));
+				
+				if (numMessagesPassed == neighborIPs.size()){ 
+					//because you can only pass as many messages as there are clients in the list
+					leaderConfirmed = true;
+				}
+				else if (candidateInt < runnerUp){
+					recipientStub.sendBallot(neighborIPs.get(numMessagesPassed), numMessagesPassed++, false);
+				}
+				else if (candidateInt > runnerUp || candidateInt == runnerUp){
+					recipientStub.sendBallot(candidate, numMessagesPassed++, false);
+				}
+			}
+		}	
+		System.out.println("The leader is " + candidate + "!");
+		return numMessagesPassed - 1; //-1 because you will always check yourself
+		//is this what we want to return or should we be returning something else?
+	}
+
 	/*
-	 * void sendBallot(String candidate, int numMessagesPassed, boolean
-	 * leaderConfirmed) throws remoteException; // 3) sending money void
-	 * receiveMoney(int amount, String sender) throws RemoteException; // void
-	 * receiveServerMessage(String serverMessage) throws RemoteException;
-	 * 
 	 * // 4) snapshotting void receiveStartSnapshot(String leader, String
 	 * sender, String recipient) throws RemoteException; void
 	 * receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>>
@@ -154,8 +183,8 @@ public class Account implements AccountInt {
 				e.printStackTrace();
 			}
 		}
-		
-		try {	
+
+		try {
 			obj.sendMoney();
 		} catch (Exception e) {
 			System.err.println("Client exception(could not send money): " + e.toString());
