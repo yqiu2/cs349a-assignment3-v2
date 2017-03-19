@@ -217,7 +217,7 @@ public class Account implements AccountInt {
 		// let's find your next neighbor for convenience sake
 		obj.nextNeighborStub = obj.nextIP();
 
-		if (args[0] == "1") {
+		if (args[0].equals("1")) {
 			System.out.println("This process is the leader initiator");
 			try {
 				obj.sendBallot(obj.localIP, 0, false);
