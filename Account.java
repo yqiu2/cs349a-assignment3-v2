@@ -1,6 +1,3 @@
-
-//import java.rmi.Remote;
-//import java.rmi.RemoteException;
 import java.rmi.RemoteException;
 import java.rmi.registry.*;
 import java.util.*;
@@ -14,7 +11,6 @@ public class Account implements AccountInt {
 	HashMap<String, AccountInt> neighbors;
 	ArrayList<String> neighborIPs;
 	ArrayList<AccountInt> neighborStubs;
-
 	AccountInt nextNeighborStub;
 	// balance
 	int balance;
@@ -112,6 +108,7 @@ public class Account implements AccountInt {
 			System.out.println("The leader is " + candidate + "!");
 			numMessagesPassed--; // ?????????????
 			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
+			
 		} else if (candidate.equals(localIP)) {
 			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
 			sendBallot(candidate, numMessagesPassed, true);
@@ -127,12 +124,16 @@ public class Account implements AccountInt {
 		}
 	}
 
+	//helper method to find next neighbor of current IP
 	public AccountInt nextIP() {
 		ArrayList<String> sortedIPs = new ArrayList<String>();
 		sortedIPs.addAll(0, neighborIPs);
 		Collections.sort(sortedIPs);
+		System.out.println(sortedIPs.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
+		System.out.println("currentIndex is " + currentIndex + "and the size is " + "sortedIPs.size()");
+
 		if (currentIndex + 1 == sortedIPs.size()) {
 			return neighbors.get(sortedIPs.get(0));
 		} else {
@@ -142,7 +143,7 @@ public class Account implements AccountInt {
 
 	// 4) snapshotting
 	public void receiveStartSnapshot(String leader, String sender, String recipient) {
-
+		
 	}
 
 	public void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) {
@@ -217,8 +218,6 @@ public class Account implements AccountInt {
 		obj.nextNeighborStub = obj.nextIP();
 
 		if (args[0] == "1") {
-			// sendBallot(String candidate, int numMessagesPassed, boolean
-			// leaderConfirmed)
 			System.out.println("This process is the leader initiator");
 			try {
 				obj.sendBallot(obj.localIP, 0, false);

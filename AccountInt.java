@@ -12,9 +12,7 @@ public interface AccountInt extends Remote {
 	// 3) leader election
 	void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException;
 	// 4) snapshotting
-	// void receiveStartSnapshot(String leader, String sender, String recipient)
-	// throws RemoteException;
-	// void receiveSnapshot(String sender, int amount,
-	// ArrayList<ArrayList<Integer>> channels) throws RemoteException;
+	 void receiveStartSnapshot(String leader, String sender, String recipient) throws RemoteException;
+	 void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) throws RemoteException;
 	// void receiveServerMessage(String serverMessage) throws RemoteException;
 }
