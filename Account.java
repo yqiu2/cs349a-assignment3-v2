@@ -128,11 +128,12 @@ public class Account implements AccountInt {
 	public AccountInt nextIP() {
 		ArrayList<String> sortedIPs = new ArrayList<String>();
 		sortedIPs.addAll(0, neighborIPs);
+		sortedIPs.add(localIP);
 		Collections.sort(sortedIPs);
 		System.out.println(sortedIPs.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
-		System.out.println("currentIndex is " + currentIndex + "and the size is " + "sortedIPs.size()");
+		System.out.println("currentIndex is " + currentIndex + "and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
 			return neighbors.get(sortedIPs.get(0));
@@ -193,9 +194,8 @@ public class Account implements AccountInt {
 				e.printStackTrace();
 			}
 		}
-
+		//remove yourself
 		obj.neighborIPs.remove(0);
-		// start to send money
 
 		// add items into hashmap for convenience later
 		for (int i = 0; i < obj.neighborIPs.size(); i++) {
