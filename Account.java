@@ -7,20 +7,27 @@ import java.util.*;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Account implements AccountInt {
+	boolean leaderConfirmed;
 	boolean startCommunication;
 	String localIP;
 	// array list of stubs of neighbors
+	HashMap<String, AccountInt> neighbors;
 	ArrayList<String> neighborIPs;
 	ArrayList<AccountInt> neighborStubs;
+
+	AccountInt nextNeighborStub;
 	// balance
 	int balance;
 
 	public Account() {
+		leaderConfirmed = false;
 		startCommunication = false;
 		localIP = "";
 		neighborIPs = new ArrayList<String>();
 		neighborStubs = new ArrayList<AccountInt>();
+		neighbors = new HashMap<String, AccountInt>();
 		balance = 200;
+		nextNeighborStub = null;
 	}
 
 	// 1) bootstrapping:
@@ -89,44 +96,58 @@ public class Account implements AccountInt {
 	}
 
 	// 3) leader election
-
-	//PLZ CHECK LOGIC
-	public int sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
-		if (startCommunication) {
-			while (!leaderConfirmed) {
-				//DID I DO THIS RIGHT?
-				Account recipientStub = (Account)neighborStubs.get(numMessagesPassed);
-				
-				// parses to int, replaces all punctuation, creates a substring of
-				// the last three characters so that IPs are comparable :p
-				int candidateInt = Integer.parseInt(candidate.replaceAll("[^a-zA-Z ]", "")
-						.substring(candidate.length() - 3, candidate.length()));
-				int runnerUp = Integer.parseInt(neighborIPs.get(numMessagesPassed).replaceAll("[^a-zA-Z ]", "")
-						.substring(neighborIPs.get(numMessagesPassed).length() - 3, neighborIPs.get(numMessagesPassed).length()));
-				
-				if (numMessagesPassed == neighborIPs.size()){ 
-					//because you can only pass as many messages as there are clients in the list
-					leaderConfirmed = true;
-				}
-				else if (candidateInt < runnerUp){
-					recipientStub.sendBallot(neighborIPs.get(numMessagesPassed), numMessagesPassed++, false);
-				}
-				else if (candidateInt > runnerUp || candidateInt == runnerUp){
-					recipientStub.sendBallot(candidate, numMessagesPassed++, false);
-				}
-			}
-		}	
-		System.out.println("The leader is " + candidate + "!");
-		return numMessagesPassed - 1; //-1 because you will always check yourself
-		//is this what we want to return or should we be returning something else?
+	private void sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
+		try {
+			AccountInt recipientStub = nextNeighborStub;
+			recipientStub.receiveBallot(candidate, numMessagesPassed, leaderConfirmed);
+		} catch (Exception e) {
+			System.err.println("Client exception(receiveIPs could not find remote Account): " + e.toString());
+			e.printStackTrace();
+		}
 	}
 
-	/*
-	 * // 4) snapshotting void receiveStartSnapshot(String leader, String
-	 * sender, String recipient) throws RemoteException; void
-	 * receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>>
-	 * channels) throws RemoteException;
-	 */
+	public void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException{
+		numMessagesPassed++;
+		if (leaderConfirmed && candidate.equals(localIP)) {
+			System.out.println("The leader is " + candidate + "!");
+			numMessagesPassed--; // ?????????????
+			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
+		} else if (candidate.equals(localIP)) {
+			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
+			sendBallot(candidate, numMessagesPassed, true);
+		} else { // received candidate != local IP
+			if (candidate.compareTo(localIP) > 0) {
+				// set candidate to be local IP
+				candidate = localIP;
+			} else {
+				// candidate is still candidate
+			}
+			System.out.println("leader not confirmed yet, candidate is " + candidate);
+			sendBallot(candidate, numMessagesPassed, false);
+		}
+	}
+
+	public AccountInt nextIP() {
+		ArrayList<String> sortedIPs = new ArrayList<String>();
+		sortedIPs.addAll(0, neighborIPs);
+		Collections.sort(sortedIPs);
+
+		int currentIndex = sortedIPs.indexOf(localIP);
+		if (currentIndex + 1 == sortedIPs.size()) {
+			return neighbors.get(sortedIPs.get(0));
+		} else {
+			return neighbors.get(sortedIPs.get(currentIndex++));
+		}
+	}
+
+	// 4) snapshotting
+	public void receiveStartSnapshot(String leader, String sender, String recipient) {
+
+	}
+
+	public void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) {
+
+	}
 
 	public static void main(String[] args) {
 		Account obj = new Account();
@@ -143,8 +164,8 @@ public class Account implements AccountInt {
 
 		}
 
-		obj.localIP = args[0];
-		for (int i = 0; i < args.length; i++) {
+		obj.localIP = args[1];
+		for (int i = 1; i < args.length; i++) {
 			obj.neighborIPs.add(args[i]);
 		}
 
@@ -174,21 +195,60 @@ public class Account implements AccountInt {
 
 		obj.neighborIPs.remove(0);
 		// start to send money
+
+		// add items into hashmap for convenience later
+		for (int i = 0; i < obj.neighborIPs.size(); i++) {
+			obj.neighbors.put(obj.neighborIPs.get(i), obj.neighborStubs.get(i));
+		}
+
+		// waiting for start communication
 		while (!obj.startCommunication) {
 			try {
 				System.out.println("waiting for startCommunication to become true");
 				Thread.sleep(10000);
+
 			} catch (Exception e) {
 				System.err.println("error with waiting " + e.toString());
 				e.printStackTrace();
 			}
 		}
 
-		try {
-			obj.sendMoney();
-		} catch (Exception e) {
-			System.err.println("Client exception(could not send money): " + e.toString());
-			e.printStackTrace();
+		// let's find your next neighbor for convenience sake
+		obj.nextNeighborStub = obj.nextIP();
+
+		if (args[0] == "1") {
+			// sendBallot(String candidate, int numMessagesPassed, boolean
+			// leaderConfirmed)
+			System.out.println("This process is the leader initiator");
+			try {
+				obj.sendBallot(obj.localIP, 0, false);
+			} catch (Exception e) {
+				System.err.println("Unable to send ballot " + e.toString());
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("This process is NOT the leader initiator.");
+		}
+
+		// waiting for leader confirmed
+		while (!obj.leaderConfirmed) {
+			try {
+				System.out.println("waiting for leaderConfirmed to become true");
+				Thread.sleep(10000);
+
+			} catch (Exception e) {
+				System.err.println("error with waiting for leader election" + e.toString());
+				e.printStackTrace();
+			}
+		}
+
+		if (obj.leaderConfirmed) {
+			try {
+				obj.sendMoney();
+			} catch (Exception e) {
+				System.err.println("Client exception(could not send money): " + e.toString());
+				e.printStackTrace();
+			}
 		}
 
 	}
