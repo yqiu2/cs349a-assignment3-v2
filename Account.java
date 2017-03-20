@@ -407,37 +407,35 @@ public class Account implements AccountInt, Serializable {
 			}
 		}
 
-		if (obj.leaderConfirmed) {
-
-			while (true) {
-				int chooseSending = (int) (Math.random() * 500);
-				if (chooseSending > 100) {
-					try {
-						obj.sendMoney();
-					} catch (Exception e) {
-						System.err.println("error in sendMoney() in main" + e.toString());
-						e.printStackTrace();
-					}
-				} else {
-					// conditional check is leader is localip, if yes send out
-					// initSnap()
-					// and initialize snapshot storage
-					if (obj.isLeader) {
-						obj.initSnap();
-					}
-				}
-				// wait time to start transfer
-				int r = 5000 + (int) (Math.random() * 50000);
-				// sending money to another account
+		while (true) {
+			int numOps = 0;
+			if (numOps < 5 || !obj.isLeader) {
 				try {
-				System.out.println("\n***Waiting for " + r / 1000 + " seconds...***\n");
-				Thread.sleep(r);
+					obj.sendMoney();
 				} catch (Exception e) {
-					System.err.println("error with sending money/initSnapshot" + e.toString());
+					System.err.println("error in sendMoney() in main" + e.toString());
 					e.printStackTrace();
 				}
-				
+			} else {
+				// conditional check is leader is localIP, if yes send out
+				// initSnap()
+				// and initialize snapshot storage
+				if (obj.isLeader) {
+					obj.initSnap();
+					numOps = 0;
+				}
 			}
+			// wait time to start transfer
+			int r = 5000 + (int) (Math.random() * 50000);
+			// sending money to another account
+			try {
+				System.out.println("\n***Waiting for " + r / 1000 + " seconds...***\n");
+				Thread.sleep(r);
+			} catch (Exception e) {
+				System.err.println("error with sending money/initSnapshot" + e.toString());
+				e.printStackTrace();
+			}
+
 		}
 	}
 }
