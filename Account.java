@@ -122,7 +122,8 @@ public class Account implements AccountInt {
 			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
 			sendBallot(candidate, numMessagesPassed, true);
 		} else { // received candidate != local IP
-			if (candidate.compareTo(localIP) >= 0) {
+			System.out.println(candidate.compareTo(localIP));
+			if (candidate.compareTo(localIP) < 0) {
 				// set candidate to be local IP
 				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate" + localIP);
 				sendBallot(localIP, numMessagesPassed, false);
@@ -141,23 +142,23 @@ public class Account implements AccountInt {
 		sortedIPs.addAll(neighborIPs);
 		sortedIPs.add(localIP);
 		Collections.sort(sortedIPs);
-		System.out.println("***\n***");
-		System.out.println("sortedIPs");
-		System.out.println(sortedIPs.toString());
-		System.out.println("neighbors hashmap");
-		System.out.println(neighbors.toString());
+//		System.out.println("***\n***");
+//		System.out.println("sortedIPs");
+//		System.out.println(sortedIPs.toString());
+//		System.out.println("neighbors hashmap");
+//		System.out.println(neighbors.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
 		System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
-			System.out.println("current index is 0");
-			System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
+//			System.out.println("current index is 0");
+//			System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
 			// System.out.println("setting nextneighborstub to " +
 			// neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
-			System.out.println("current index is " + currentIndex + " +1");
+//			System.out.println("current index is " + currentIndex + " +1");
 			currentIndex++;
 			// System.out.println("sortedIPs.get(currentIndex) " +
 			// sortedIPs.get(currentIndex));
