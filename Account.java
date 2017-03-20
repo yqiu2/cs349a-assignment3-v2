@@ -212,6 +212,7 @@ public class Account implements AccountInt, Serializable {
 				e.printStackTrace();
 			}
 		}
+		
 		// storing own snapshot into global snapshot storage
 		System.out.println("storing own snapshot into global snapshot storage");
 		HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
@@ -226,7 +227,7 @@ public class Account implements AccountInt, Serializable {
 	}
 
 	public void receiveMarker(String leader, String sender, int snapID) {
-		System.out.println(localIP + " has received marker from " + sender);
+		System.out.println(localIP + " has received marker from " + sender + "id of " + snapID);
 		// upon receiving first marker
 		if (!ownSnaps.containsKey(snapID)) {
 			// init new own snapshot
