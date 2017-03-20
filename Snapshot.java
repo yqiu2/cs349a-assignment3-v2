@@ -21,6 +21,11 @@ public class Snapshot {
 	public int getID() {
 		return snapID;
 	}
+	
+	public void setID(int id) {
+		snapID = id;
+		
+	}
 
 	public String getProcessID() {
 		return processID;

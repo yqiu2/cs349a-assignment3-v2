@@ -233,8 +233,10 @@ public class Account implements AccountInt, Serializable {
 			Snapshot ownSnap = new Snapshot(this.localIP);
 			// snap balance
 			ownSnap.setBal(this.balance);
+			ownSnap.setID(snapID);
+			
 			// stores own snap because multiple snaps can occur at once
-			ownSnaps.put(ownSnap.getID(), ownSnap);
+			ownSnaps.put(snapID, ownSnap);
 
 			System.out.println("created, set, and stored own snapshot");
 
