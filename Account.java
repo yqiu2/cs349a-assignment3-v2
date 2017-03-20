@@ -71,32 +71,32 @@ public class Account implements AccountInt {
 	}
 
 	private void sendMoney() throws RemoteException, InterruptedException {
-		while (true) {
-			if (startCommunication) {
-				// wait time to start transfer
-				int r = 5000 + (int) (Math.random() * 50000);
-				// amount transferred
-				int m = 1 + (int) (Math.random() * balance);
-				if (m < 0)
-					m = 0;
-				int p = -1;
-				String recipientIP;
-				AccountInt recipientStub;
-				do {
-					p = (int) (Math.random() * neighborIPs.size());
-					recipientIP = neighborIPs.get(p);
-					recipientStub = neighborStubs.get(p);
-				} while (recipientIP.equals(localIP));
+		// while (true) {
+		if (startCommunication) {
+			// wait time to start transfer
+			int r = 5000 + (int) (Math.random() * 50000);
+			// amount transferred
+			int m = 1 + (int) (Math.random() * balance);
+			if (m < 0)
+				m = 0;
+			int p = -1;
+			String recipientIP;
+			AccountInt recipientStub;
+			do {
+				p = (int) (Math.random() * neighborIPs.size());
+				recipientIP = neighborIPs.get(p);
+				recipientStub = neighborStubs.get(p);
+			} while (recipientIP.equals(localIP));
 
-				// sending money to another account
-				System.out.println("\n***Waiting for " + r / 1000 + " seconds...***\n");
-				Thread.sleep(r);
-				System.out.println("sending $" + m + " to " + recipientIP);
-				balance -= m;
-				recipientStub.receiveMoney(m, localIP);
-				System.out.println("\t this account balance is $" + balance);
-			}
+			// sending money to another account
+			System.out.println("\n***Waiting for " + r / 1000 + " seconds...***\n");
+			Thread.sleep(r);
+			System.out.println("sending $" + m + " to " + recipientIP);
+			balance -= m;
+			recipientStub.receiveMoney(m, localIP);
+			System.out.println("\t this account balance is $" + balance);
 		}
+		// }
 	}
 
 	// 3) leader election
@@ -174,50 +174,50 @@ public class Account implements AccountInt {
 
 	// only run if leader
 	private void initSnap() {
-		while (true) {
-			try {
-				System.out.println("Sleeping for 55 seconds");
-				Thread.sleep(55000);
-			} catch (Exception e) {
-				System.out.println("apparently sleep needs a try catch in initSnap();");
-			}
-			// initializing global snapshot storage
-			globalSnaps = new HashMap<Integer, HashMap<String, Snapshot>>();
-			// init new own snapshot
-			Snapshot ownSnap = new Snapshot(this.localIP);
-			// snap balance
-			ownSnap.setBal(this.balance);
-			// stores own snap because multiple snaps can occur at once
-			ownSnaps.put(ownSnap.getID(), ownSnap);
-			System.out.println("created, set, and stored own snapshot");
-
-			for (String neighborIP : neighbors.keySet()) {
-				try {
-					// send markers
-					System.out.println("sending markers to " + neighborIP + " to start snap");
-					AccountInt recipientStub = neighbors.get(neighborIP);
-					recipientStub.receiveMarker(localIP, localIP, ownSnap.getID());
-					// start recording channel
-					System.out.println("start recording channels");
-					ownSnap.addMessageChannel(neighborIP);
-					ownSnap.setRecordingState(neighborIP, true);
-
-				} catch (Exception e) {
-					System.err.println("error in sending markers in initSnap()" + e.toString());
-					e.printStackTrace();
-				}
-			}
-			// storing own snapshot into global snapshot storage
-			System.out.println("storing own snapshot into global snapshot storage");
-			HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
-			for (String neighborIP : neighborIPs) {
-				channelSnapshots.put(neighborIP, null);
-			}
-			channelSnapshots.put(localIP, null);
-			// adding the snapshot to the global snapshot storage
-			System.out.println("adding the snapshot to the global snapshot storage");
-			globalSnaps.put(ownSnap.getID(), channelSnapshots);
+		// while (true) {
+		try {
+			System.out.println("Sleeping for 55 seconds");
+			Thread.sleep(55000);
+		} catch (Exception e) {
+			System.out.println("apparently sleep needs a try catch in initSnap();");
 		}
+		// initializing global snapshot storage
+		globalSnaps = new HashMap<Integer, HashMap<String, Snapshot>>();
+		// init new own snapshot
+		Snapshot ownSnap = new Snapshot(this.localIP);
+		// snap balance
+		ownSnap.setBal(this.balance);
+		// stores own snap because multiple snaps can occur at once
+		ownSnaps.put(ownSnap.getID(), ownSnap);
+		System.out.println("created, set, and stored own snapshot");
+
+		for (String neighborIP : neighbors.keySet()) {
+			try {
+				// send markers
+				System.out.println("sending markers to " + neighborIP + " to start snap");
+				AccountInt recipientStub = neighbors.get(neighborIP);
+				recipientStub.receiveMarker(localIP, localIP, ownSnap.getID());
+				// start recording channel
+				System.out.println("start recording channels");
+				ownSnap.addMessageChannel(neighborIP);
+				ownSnap.setRecordingState(neighborIP, true);
+
+			} catch (Exception e) {
+				System.err.println("error in sending markers in initSnap()" + e.toString());
+				e.printStackTrace();
+			}
+		}
+		// storing own snapshot into global snapshot storage
+		System.out.println("storing own snapshot into global snapshot storage");
+		HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
+		for (String neighborIP : neighborIPs) {
+			channelSnapshots.put(neighborIP, null);
+		}
+		channelSnapshots.put(localIP, null);
+		// adding the snapshot to the global snapshot storage
+		System.out.println("adding the snapshot to the global snapshot storage");
+		globalSnaps.put(ownSnap.getID(), channelSnapshots);
+		// }
 	}
 
 	public void receiveMarker(String leader, String sender, int snapID) {
@@ -391,22 +391,21 @@ public class Account implements AccountInt {
 		}
 
 		if (obj.leaderConfirmed) {
-			try {
-				obj.sendMoney();
+
+			while (true) {
+				try {
+					obj.sendMoney();
+				} catch (Exception e) {
+					System.err.println("error in sendMoney() in main" + e.toString());
+					e.printStackTrace();
+				}
 				// conditional check is leader is localip, if yes send out
 				// initSnap()
 				// and initialize snapshot storage
 				if (obj.isLeader) {
-
 					obj.initSnap();
 				}
-
-			} catch (Exception e) {
-				System.err.println("Client exception(could not send money): " + e.toString());
-				e.printStackTrace();
 			}
 		}
-
 	}
-
 }
