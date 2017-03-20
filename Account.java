@@ -125,7 +125,8 @@ public class Account implements AccountInt {
 			numMessagesPassed--;
 			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
 
-		} else if (candidate.equals(localIP)) {
+		} else if (candidate.equals(localIP) && !leaderConfirmed) {
+			leaderConfirmed = true;
 			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
 			sendBallot(candidate, numMessagesPassed, true);
 		} else { // received candidate != local IP
