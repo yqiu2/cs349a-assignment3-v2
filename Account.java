@@ -121,26 +121,29 @@ public class Account implements AccountInt {
 			e.printStackTrace();
 		}
 		numMessagesPassed++;
-		if (leaderConfirmed && candidate.equals(localIP)) {
+		if (candidate.equals(localIP) && leaderConfirmed) {
 			System.out.println("The leader is " + candidate + "!");
 			numMessagesPassed--;
 			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
-
 		} else if (candidate.equals(localIP) && !leaderConfirmed) {
-			leaderConfirmed = true;
+			this.leaderConfirmed = true;
 			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
-			sendBallot(candidate, numMessagesPassed, leaderConfirmed);
-		} else { // received candidate != local IP
+			sendBallot(candidate, numMessagesPassed, true);
+		} else if (!candidate.equals(localIP) && leaderConfirmed ){ 
+			System.out.println("passing on the confirmation that "+ candidate + "is the leader");
+			sendBallot(candidate, numMessagesPassed, true);
+		} else {	
+			// received candidate != local IP
 			//System.out.println(candidate.compareTo(localIP));
 			if (candidate.compareTo(localIP) < 0) {
 				// set candidate to be local IP
 				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate" + localIP);
-				sendBallot(localIP, numMessagesPassed, leaderConfirmed);
+				sendBallot(localIP, numMessagesPassed, false);
 			} else {
 				// candidate is still candidate
 				System.out
 						.println("leader not confirmed yet, recieved " + candidate + "new candidate remains the same");
-				sendBallot(candidate, numMessagesPassed, leaderConfirmed);
+				sendBallot(candidate, numMessagesPassed, false);
 			}
 		}
 	}
