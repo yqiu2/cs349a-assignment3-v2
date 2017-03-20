@@ -13,10 +13,7 @@ public interface AccountInt extends Remote {
 	void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException;
 
 	// 4) snapshotting
-	void receiveStartSnapshot(String leader, String sender, String recipient) throws RemoteException;
-
-	void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) throws RemoteException;
-
-	// void receiveServerMessage(String serverMessage) throws RemoteException;
-	void sendSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) throws RemoteException;
+	void receiveMarker(String leader, String sender, int snapID) throws RemoteException;
+	
+	void receiveSnapshot(Snapshot snap) throws RemoteException;
 }
