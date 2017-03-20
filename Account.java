@@ -201,8 +201,9 @@ public class Account implements AccountInt {
 			}
 		}
 
-		// storing own snapshot into global snapshot storage
-		System.out.println("storing own snapshot into global snapshot storage");
+		
+		System.out.println("Initializing global snapshot storage");
+		
 		HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
 		for (String neighborIP : neighborIPs) {
 			channelSnapshots.put(neighborIP, null);
@@ -211,6 +212,7 @@ public class Account implements AccountInt {
 		// adding the snapshot to the global snapshot storage
 		System.out.println("adding the snapshot to the global snapshot storage");
 		globalSnaps.put(ownSnap.getID(), channelSnapshots);
+		System.out.println("initialized global snapshots to be: "+ globalSnaps.toString());
 		// }
 
 		try {
@@ -268,8 +270,7 @@ public class Account implements AccountInt {
 			// if all channels have stop recording then send snapshot to leader
 			if (ownSnaps.get(snapID).snapshotFinished()) {
 				try {
-					System.out.println("sending snapshot to " + leader);
-					if (leader.equals(localIP)) {
+						if (leader.equals(localIP)) {
 						// if leader store its own snapshot once its received a
 						// snapshot from
 						// everyone else
@@ -278,6 +279,7 @@ public class Account implements AccountInt {
 							HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snapID);
 							existingSnaps.put(localIP, ownSnaps.get(snapID));
 							globalSnaps.put(snapID, existingSnaps);
+							System.out.println("Can we get to here???!");
 						}
 					} else {
 						AccountInt leaderStub = neighbors.get(leader);
