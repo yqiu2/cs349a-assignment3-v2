@@ -75,11 +75,10 @@ public class Account implements AccountInt, Serializable {
 		System.out.println("\tYour new balance is $" + balance);
 	}
 
-	private void sendMoney() throws RemoteException, InterruptedException {
+	private void sendMoney() throws RemoteException {
 		// while (true) {
 		if (startCommunication) {
-			// wait time to start transfer
-			int r = 5000 + (int) (Math.random() * 50000);
+
 			// amount transferred
 			int m = 1 + (int) (Math.random() * balance);
 			if (m < 0)
@@ -93,9 +92,6 @@ public class Account implements AccountInt, Serializable {
 				recipientStub = neighborStubs.get(p);
 			} while (recipientIP.equals(localIP));
 
-			// sending money to another account
-			System.out.println("\n***Waiting for " + r / 1000 + " seconds...***\n");
-			Thread.sleep(r);
 			System.out.println("sending $" + m + " to " + recipientIP);
 			balance -= m;
 			recipientStub.receiveMoney(m, localIP);
@@ -180,12 +176,7 @@ public class Account implements AccountInt, Serializable {
 	// only run if leader
 	private void initSnap() {
 		// while (true) {
-		try {
-			System.out.println("Sleeping for 55 seconds");
-			Thread.sleep(55000);
-		} catch (Exception e) {
-			System.out.println("apparently sleep needs a try catch in initSnap();");
-		}
+
 		// initializing global snapshot storage
 		globalSnaps = new HashMap<Integer, HashMap<String, Snapshot>>();
 		// init new own snapshot
@@ -199,7 +190,7 @@ public class Account implements AccountInt, Serializable {
 		for (String neighborIP : neighbors.keySet()) {
 			try {
 				// send markers
-				System.out.println("sending markers to " + neighborIP + " to start snap");
+				System.out.println("sending markers to " + neighborIP + " to start snap: " + ownSnap.getID());
 				AccountInt recipientStub = neighbors.get(neighborIP);
 				recipientStub.receiveMarker(localIP, localIP, ownSnap.getID());
 				// start recording channel
@@ -212,7 +203,7 @@ public class Account implements AccountInt, Serializable {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// storing own snapshot into global snapshot storage
 		System.out.println("storing own snapshot into global snapshot storage");
 		HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
@@ -224,6 +215,14 @@ public class Account implements AccountInt, Serializable {
 		System.out.println("adding the snapshot to the global snapshot storage");
 		globalSnaps.put(ownSnap.getID(), channelSnapshots);
 		// }
+
+		try {
+			System.out.println("Sleeping for 55 seconds");
+			Thread.sleep(55000);
+		} catch (Exception e) {
+			System.out.println("apparently sleep needs a try catch in initSnap();");
+		}
+
 	}
 
 	public void receiveMarker(String leader, String sender, int snapID) {
@@ -235,11 +234,11 @@ public class Account implements AccountInt, Serializable {
 			// snap balance
 			ownSnap.setBal(this.balance);
 			ownSnap.setID(snapID);
-			
+
 			// stores own snap because multiple snaps can occur at once
 			ownSnaps.put(snapID, ownSnap);
 
-			System.out.println("created, set, and stored own snapshot");
+			System.out.println(localIP + " has created, set, and stored own snapshot");
 
 			for (String neighborIP : neighbors.keySet()) {
 				try {
@@ -411,19 +410,33 @@ public class Account implements AccountInt, Serializable {
 		if (obj.leaderConfirmed) {
 
 			while (true) {
-
+				int chooseSending = (int) (Math.random() * 500);
+				if (chooseSending > 100) {
+					try {
+						obj.sendMoney();
+					} catch (Exception e) {
+						System.err.println("error in sendMoney() in main" + e.toString());
+						e.printStackTrace();
+					}
+				} else {
+					// conditional check is leader is localip, if yes send out
+					// initSnap()
+					// and initialize snapshot storage
+					if (obj.isLeader) {
+						obj.initSnap();
+					}
+				}
+				// wait time to start transfer
+				int r = 5000 + (int) (Math.random() * 50000);
+				// sending money to another account
 				try {
-					obj.sendMoney();
+				System.out.println("\n***Waiting for " + r / 1000 + " seconds...***\n");
+				Thread.sleep(r);
 				} catch (Exception e) {
-					System.err.println("error in sendMoney() in main" + e.toString());
+					System.err.println("error with sending money/initSnapshot" + e.toString());
 					e.printStackTrace();
 				}
-				// conditional check is leader is localip, if yes send out
-				// initSnap()
-				// and initialize snapshot storage
-				if (obj.isLeader) {
-					obj.initSnap();
-				}
+				
 			}
 		}
 	}
