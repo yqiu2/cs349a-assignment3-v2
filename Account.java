@@ -213,11 +213,6 @@ public class Account implements AccountInt {
 		//remove yourself
 		obj.neighborIPs.remove(0);
 
-		// add items into hashmap for convenience later
-		for (int i = 0; i < obj.neighborIPs.size(); i++) {
-			obj.neighbors.put(obj.neighborIPs.get(i), obj.neighborStubs.get(i));
-		}
-
 		// waiting for start communication
 		while (!obj.startCommunication) {
 			try {
@@ -228,6 +223,11 @@ public class Account implements AccountInt {
 				System.err.println("error with waiting " + e.toString());
 				e.printStackTrace();
 			}
+		}
+		
+		// add items into hashmap for convenience later
+		for (int i = 0; i < obj.neighborIPs.size(); i++) {
+			obj.neighbors.put(obj.neighborIPs.get(i), obj.neighborStubs.get(i));
 		}
 
 		// let's find your next neighbor for convenience sake
