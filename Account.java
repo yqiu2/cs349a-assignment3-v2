@@ -129,17 +129,22 @@ public class Account implements AccountInt {
 		sortedIPs.addAll(0, neighborIPs);
 		sortedIPs.add(localIP);
 		Collections.sort(sortedIPs);
+		System.out.println("***\n***");
+		System.out.println("sortedIPs");
 		System.out.println(sortedIPs.toString());
+		System.out.println("neighbors hashmap");
+		System.out.println(neighbors.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
 		System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
+			System.out.println("current index is 0");
 			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
+			System.out.println("current index is " + currentIndex++);
 			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(currentIndex++)).toString());
-
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex++));
 		}
 	}
