@@ -276,10 +276,9 @@ public class Account implements AccountInt {
 						// everyone else
 						if (ownSnaps.get(snapID).snapshotFinished()) {
 							System.out.println("adding leader snapshot into global storage");
-							HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snapID);
 							System.out.println(ownSnaps);
 							System.out.println("1");
-							existingSnaps.put(localIP, ownSnaps.get(snapID));
+							globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
 							System.out.println("2");
 							globalSnaps.put(snapID, existingSnaps);
 							System.out.println("3Can we get to here???!");
@@ -411,7 +410,7 @@ public class Account implements AccountInt {
 		int numOps = 0;
 
 		while (true) {
-			if (numOps < 3 || !obj.isLeader) {
+			if (numOps < 1 || !obj.isLeader) {
 				try {
 					obj.sendMoney();
 					numOps++;
