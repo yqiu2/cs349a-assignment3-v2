@@ -261,22 +261,34 @@ public class Account implements AccountInt {
 			// stop recording on sender channel
 			ownSnaps.get(snapID).setRecordingState(sender, false);
 			// store channel state of sender channel
-		}
-		// if all channels have stop recording then send snapshot to leader
-		if (ownSnaps.get(snapID).snapshotFinished()) {
-			try {
-				System.out.println("sending snapshot to " + leader);
-				AccountInt leaderStub = neighbors.get(leader);
-				//null pointer exception
-				System.out.println("******\n******");
-				System.out.println("snap being sent to leader\n" + ownSnaps.get(snapID));
-				System.out.println("sending to leaderStub which is " + leaderStub);
-				leaderStub.receiveSnapshot(ownSnaps.get(snapID));
-			} catch (Exception e) {
-				System.err.println("error in sending snapshot back to leader in receiveMarker()" + e.toString());
-				e.printStackTrace();
+			// if all channels have stop recording then send snapshot to leader
+			if (ownSnaps.get(snapID).snapshotFinished()) {
+				try {
+					System.out.println("sending snapshot to " + leader);
+					if (leader.equals(localIP)){
+						// if leader store its own snapshot once its received a snapshot from
+						// everyone else
+						if (ownSnaps.get(snapID).snapshotFinished()) {
+							System.out.println("adding leader snapshot into global storage");
+							HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snapID);
+							existingSnaps.put(localIP, ownSnaps.get(snapID));
+							globalSnaps.put(snapID, existingSnaps);
+						}
+					}else{
+					AccountInt leaderStub = neighbors.get(leader);
+					//null pointer exception
+					System.out.println("******\n******");
+					System.out.println("snap being sent to leader\n" + ownSnaps.get(snapID));
+					System.out.println("sending to leaderStub which is " + leaderStub);
+					leaderStub.receiveSnapshot(ownSnaps.get(snapID));
+					}
+				} catch (Exception e) {
+					System.err.println("error in sending snapshot back to leader in receiveMarker()" + e.toString());
+					e.printStackTrace();
+				}
 			}
 		}
+		
 	}
 
 	public void receiveSnapshot(Snapshot snap) {
@@ -286,13 +298,7 @@ public class Account implements AccountInt {
 		existingSnaps.put(snap.getProcessID(), snap);
 		globalSnaps.put(snap.getID(), existingSnaps);
 
-		// if leader store its own snapshot once its received a snapshot from
-		// everyone else
-		if (ownSnaps.get(snap.getID()).snapshotFinished()) {
-			System.out.println("adding leader snapshot into global storage");
-			existingSnaps.put(localIP, ownSnaps.get(snap));
-			globalSnaps.put(snap.getID(), existingSnaps);
-		}
+		
 
 		// check if snapshot storage has snapshots for all
 		System.out.println("checking if snapshot storage has snapshots for all");
