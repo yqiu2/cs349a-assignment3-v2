@@ -23,6 +23,7 @@ public class Account implements AccountInt {
 		neighborStubs = new ArrayList<AccountInt>();
 		neighbors = new HashMap<String, AccountInt>();
 		balance = 200;
+		nextNeighborStub = null;
 	}
 
 	// 1) bootstrapping:
@@ -93,6 +94,10 @@ public class Account implements AccountInt {
 	// 3) leader election
 	private void sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
 		try {
+			if (nextNeighborStub == null) {
+				// let's find your next neighbor for #convenience
+				nextStub();
+			}
 			AccountInt recipientStub = this.nextNeighborStub;
 			recipientStub.receiveBallot(candidate, numMessagesPassed, leaderConfirmed);
 		} catch (Exception e) {
@@ -148,6 +153,11 @@ public class Account implements AccountInt {
 			currentIndex++;
 			//System.out.println("sortedIPs.get(currentIndex) " + sortedIPs.get(currentIndex));
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex));
+		}
+		
+		System.out.println("the nxt neighbor stub " + nextNeighborStub.toString());
+		if (neighborStubs.contains(nextNeighborStub)){
+			System.out.println("yes, we found a stub");
 		}
 	}
 
@@ -232,13 +242,8 @@ public class Account implements AccountInt {
 			obj.neighbors.put(obj.neighborIPs.get(i), obj.neighborStubs.get(i));
 		}
 
-		// let's find your next neighbor for #convenience
-		obj.nextStub();
+
 		
-		System.out.println("the nxt neighbor stub " + obj.nextNeighborStub.toString());
-		if (obj.neighborStubs.contains(obj.nextNeighborStub)){
-			System.out.println("yes, we found a stub");
-		}
 
 		if (args[0].equals("1")) {
 			System.out.println("This process is the leader initiator");
