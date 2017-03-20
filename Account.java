@@ -269,7 +269,7 @@ public class Account implements AccountInt {
 				AccountInt leaderStub = neighbors.get(leader);
 				//null pointer exception
 				System.out.println("******\n******");
-				System.out.println("snapID being sent to leader " + ownSnaps.get(snapID));
+				System.out.println("snap being sent to leader\n" + ownSnaps.get(snapID));
 				System.out.println("sending to leaderStub which is " + leaderStub);
 				leaderStub.receiveSnapshot(ownSnaps.get(snapID));
 			} catch (Exception e) {
@@ -304,7 +304,8 @@ public class Account implements AccountInt {
 			}
 		}
 		// if all snapshots are received then we can print out snapshots
-		if (receivedAll) {
+		if (receivedAll && this.isLeader) {
+			System.out.println("all snapshots have been received");
 			for (Snapshot snapfrom : existingSnaps.values()) {
 				System.out.println(snapfrom.toString());
 			}

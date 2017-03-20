@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Snapshot {
 	static int numSnapshots = 0;
-	int snapID;
+	static int snapID;
 	int snapBal;
 	String processID;
 	HashMap<String, ArrayList<Integer>> snapChannels;
@@ -10,8 +10,8 @@ public class Snapshot {
 
 	public Snapshot(String ipAddress) {
 		snapBal = -1;
-		snapID = numSnapshots;
-		numSnapshots++;
+		snapID = numSnapshots++;
+		//numSnapshots++;
 		processID = ipAddress;
 		snapChannels = new HashMap<String, ArrayList<Integer>>();
 		recChannels = new HashMap<String, Boolean>();
