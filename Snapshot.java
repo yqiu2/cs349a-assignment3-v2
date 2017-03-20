@@ -1,7 +1,12 @@
+import java.io.Serializable;
 import java.util.*;
 
-public class Snapshot {
-	//static int numSnapshots = 0;
+public class Snapshot implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8251690269021088830L;
+	// static int numSnapshots = 0;
 	int snapID;
 	int snapBal;
 	String processID;
@@ -10,9 +15,9 @@ public class Snapshot {
 
 	public Snapshot(String ipAddress) {
 		snapBal = -1;
-		snapID = (int)(Math.random() * 99999);
-		//snapID = numSnapshots++;
-		//numSnapshots++;
+		snapID = (int) (Math.random() * 99999);
+		// snapID = numSnapshots++;
+		// numSnapshots++;
 		processID = ipAddress;
 		snapChannels = new HashMap<String, ArrayList<Integer>>();
 		recChannels = new HashMap<String, Boolean>();
@@ -21,10 +26,10 @@ public class Snapshot {
 	public int getID() {
 		return snapID;
 	}
-	
+
 	public void setID(int id) {
 		snapID = id;
-		
+
 	}
 
 	public String getProcessID() {
@@ -39,7 +44,7 @@ public class Snapshot {
 		snapBal = balance;
 	}
 
-	// recording Channel  STORES MESSAGES
+	// recording Channel STORES MESSAGES
 	public void addMessageChannel(String key) {
 		ArrayList<Integer> value = new ArrayList<Integer>();
 		snapChannels.put(key, value);
@@ -53,7 +58,7 @@ public class Snapshot {
 		return snapChannels;
 	}
 
-	// Channel State STORE STATE	
+	// Channel State STORE STATE
 	public void addChannelState(String key, Boolean value) {
 		recChannels.put(key, value);
 	}

@@ -1,14 +1,11 @@
-import java.io.Serializable;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.*;
 import java.util.*;
 import java.rmi.server.UnicastRemoteObject;
 
-public class Account implements AccountInt, Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2440998779580408800L;
+public class Account implements AccountInt {
+
 	boolean leaderConfirmed;
 	boolean isLeader;
 	boolean startCommunication;
