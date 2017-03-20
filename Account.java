@@ -23,7 +23,6 @@ public class Account implements AccountInt {
 		neighborStubs = new ArrayList<AccountInt>();
 		neighbors = new HashMap<String, AccountInt>();
 		balance = 200;
-		nextNeighborStub = null;
 	}
 
 	// 1) bootstrapping:
@@ -136,8 +135,11 @@ public class Account implements AccountInt {
 		System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
+			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
+			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
+
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex++));
 		}
 	}
@@ -175,6 +177,7 @@ public class Account implements AccountInt {
 		}
 
 		obj.localIP = args[1];
+		
 		for (int i = 1; i < args.length; i++) {
 			obj.neighborIPs.add(args[i]);
 		}
@@ -224,6 +227,7 @@ public class Account implements AccountInt {
 
 		// let's find your next neighbor for convenience sake
 		obj.nextStub();
+		
 		System.out.println("the nxt neighbor stub " + obj.nextNeighborStub.toString());
 
 		if (args[0].equals("1")) {
