@@ -112,11 +112,10 @@ public class Account implements AccountInt {
 	}
 
 	public void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException {
-		try{
+		try {
 			System.out.println("sleeping for 5 seconds");
-		Thread.sleep(5000);
-		}
-		catch (Exception e) {
+			Thread.sleep(5000);
+		} catch (Exception e) {
 			System.err.println("Sleeping in receiveballot " + e.toString());
 			e.printStackTrace();
 		}
@@ -127,22 +126,23 @@ public class Account implements AccountInt {
 			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
 		} else if (candidate.equals(localIP) && !leaderConfirmed) {
 			this.leaderConfirmed = true;
-			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
+			System.out.println("the leader is " + candidate + " and I'm sending out the confirmations");
 			sendBallot(candidate, numMessagesPassed, true);
-		} else if (!candidate.equals(localIP) && leaderConfirmed ){ 
-			System.out.println("passing on the confirmation that "+ candidate + "is the leader");
+		} else if (!candidate.equals(localIP) && leaderConfirmed) {
+			this.leaderConfirmed = true;
+			System.out.println("passing on the confirmation that " + candidate + " is the leader");
 			sendBallot(candidate, numMessagesPassed, true);
-		} else {	
+		} else {
 			// received candidate != local IP
-			//System.out.println(candidate.compareTo(localIP));
+			// System.out.println(candidate.compareTo(localIP));
 			if (candidate.compareTo(localIP) < 0) {
 				// set candidate to be local IP
-				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate" + localIP);
+				System.out.println("leader not confirmed yet, recieved " + candidate + " new candidate" + localIP);
 				sendBallot(localIP, numMessagesPassed, false);
 			} else {
 				// candidate is still candidate
 				System.out
-						.println("leader not confirmed yet, recieved " + candidate + "new candidate remains the same");
+						.println("leader not confirmed yet, recieved " + candidate + " new candidate remains the same");
 				sendBallot(candidate, numMessagesPassed, false);
 			}
 		}
@@ -154,33 +154,35 @@ public class Account implements AccountInt {
 		sortedIPs.addAll(neighborIPs);
 		sortedIPs.add(localIP);
 		Collections.sort(sortedIPs);
-//		System.out.println("***\n***");
-//		System.out.println("sortedIPs");
-//		System.out.println(sortedIPs.toString());
-//		System.out.println("neighbors hashmap");
-//		System.out.println(neighbors.toString());
+		// System.out.println("***\n***");
+		// System.out.println("sortedIPs");
+		// System.out.println(sortedIPs.toString());
+		// System.out.println("neighbors hashmap");
+		// System.out.println(neighbors.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
-	//	System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
+		// System.out.println("currentIndex is " + currentIndex + " and the size
+		// is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
-//			System.out.println("current index is 0");
-//			System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
+			// System.out.println("current index is 0");
+			// System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
 			// System.out.println("setting nextneighborstub to " +
 			// neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
-//			System.out.println("current index is " + currentIndex + " +1");
+			// System.out.println("current index is " + currentIndex + " +1");
 			currentIndex++;
 			// System.out.println("sortedIPs.get(currentIndex) " +
 			// sortedIPs.get(currentIndex));
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex));
 		}
 
-//		System.out.println("the nxt neighbor stub " + nextNeighborStub.toString());
-//		if (neighborStubs.contains(nextNeighborStub)) {
-//			System.out.println("yes, we found a stub");
-//		}
+		// System.out.println("the nxt neighbor stub " +
+		// nextNeighborStub.toString());
+		// if (neighborStubs.contains(nextNeighborStub)) {
+		// System.out.println("yes, we found a stub");
+		// }
 	}
 
 	// 4) snapshotting
