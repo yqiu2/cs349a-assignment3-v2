@@ -113,6 +113,7 @@ public class Account implements AccountInt {
 
 	public void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException {
 		try{
+			System.out.println("sleeping for 5 seconds");
 		Thread.sleep(5000);
 		}
 		catch (Exception e) {
@@ -128,18 +129,18 @@ public class Account implements AccountInt {
 		} else if (candidate.equals(localIP) && !leaderConfirmed) {
 			leaderConfirmed = true;
 			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
-			sendBallot(candidate, numMessagesPassed, true);
+			sendBallot(candidate, numMessagesPassed, leaderConfirmed);
 		} else { // received candidate != local IP
-			System.out.println(candidate.compareTo(localIP));
+			//System.out.println(candidate.compareTo(localIP));
 			if (candidate.compareTo(localIP) < 0) {
 				// set candidate to be local IP
 				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate" + localIP);
-				sendBallot(localIP, numMessagesPassed, false);
+				sendBallot(localIP, numMessagesPassed, leaderConfirmed);
 			} else {
 				// candidate is still candidate
 				System.out
 						.println("leader not confirmed yet, recieved " + candidate + "new candidate remains the same");
-				sendBallot(candidate, numMessagesPassed, false);
+				sendBallot(candidate, numMessagesPassed, leaderConfirmed);
 			}
 		}
 	}
@@ -157,7 +158,7 @@ public class Account implements AccountInt {
 //		System.out.println(neighbors.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
-		System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
+	//	System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
 //			System.out.println("current index is 0");
