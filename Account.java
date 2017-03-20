@@ -406,9 +406,9 @@ public class Account implements AccountInt, Serializable {
 				e.printStackTrace();
 			}
 		}
+		int numOps = 0;
 
 		while (true) {
-			int numOps = 0;
 			if (numOps < 3 || !obj.isLeader) {
 				try {
 					obj.sendMoney();
