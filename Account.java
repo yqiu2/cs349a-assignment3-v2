@@ -277,6 +277,7 @@ public class Account implements AccountInt {
 						if (ownSnaps.get(snapID).snapshotFinished()) {
 							System.out.println("adding leader snapshot into global storage");
 							System.out.println(ownSnaps);
+							System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
 							System.out.println("1");
 							globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
 							System.out.println("3Can we get to here???!");
