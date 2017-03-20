@@ -267,6 +267,10 @@ public class Account implements AccountInt {
 			try {
 				System.out.println("sending snapshot to " + leader);
 				AccountInt leaderStub = neighbors.get(leader);
+				//null pointer exception
+				System.out.println("******\n******");
+				System.out.println("snapID being sent to leader " + ownSnaps.get(snapID));
+				System.out.println("sending to leaderStub which is " + leaderStub);
 				leaderStub.receiveSnapshot(ownSnaps.get(snapID));
 			} catch (Exception e) {
 				System.err.println("error in sending snapshot back to leader in receiveMarker()" + e.toString());
@@ -393,6 +397,7 @@ public class Account implements AccountInt {
 		if (obj.leaderConfirmed) {
 
 			while (true) {
+
 				try {
 					obj.sendMoney();
 				} catch (Exception e) {
