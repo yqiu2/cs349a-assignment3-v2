@@ -126,7 +126,7 @@ public class Account implements AccountInt {
 	//helper method to find next neighbor of current IP
 	public void nextStub() {
 		ArrayList<String> sortedIPs = new ArrayList<String>();
-		sortedIPs.addAll(0, neighborIPs);
+		sortedIPs.addAll(neighborIPs);
 		sortedIPs.add(localIP);
 		Collections.sort(sortedIPs);
 		System.out.println("***\n***");
@@ -140,11 +140,14 @@ public class Account implements AccountInt {
 
 		if (currentIndex + 1 == sortedIPs.size()) {
 			System.out.println("current index is 0");
+			System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
 			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
 			System.out.println("current index is " + currentIndex + " +1");
-			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex++));
+			currentIndex++;
+			System.out.println("sortedIPs.get(currentIndex) " + sortedIPs.get(currentIndex));
+			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex));
 		}
 	}
 
@@ -160,7 +163,7 @@ public class Account implements AccountInt {
 
 	}
 	
-	public void sendSnapshot(){
+	public void sendSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels){
 		//process records its state
 		//sends a marker along C before sending further message down C
 	}
