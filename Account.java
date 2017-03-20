@@ -409,7 +409,7 @@ public class Account implements AccountInt, Serializable {
 
 		while (true) {
 			int numOps = 0;
-			if (numOps < 5 || !obj.isLeader) {
+			if (numOps < 3 || !obj.isLeader) {
 				try {
 					obj.sendMoney();
 				} catch (Exception e) {
@@ -417,6 +417,7 @@ public class Account implements AccountInt, Serializable {
 					e.printStackTrace();
 				}
 				numOps++;
+				System.out.println("numOps: " + numOps);
 			} else {
 				// conditional check is leader is localIP, if yes send out
 				// initSnap()
