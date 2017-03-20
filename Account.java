@@ -93,10 +93,10 @@ public class Account implements AccountInt {
 	// 3) leader election
 	private void sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
 		try {
-			AccountInt recipientStub = nextNeighborStub;
+			AccountInt recipientStub = this.nextNeighborStub;
 			recipientStub.receiveBallot(candidate, numMessagesPassed, leaderConfirmed);
 		} catch (Exception e) {
-			System.err.println("Client exception(receiveIPs could not find remote Account): " + e.toString());
+			System.err.println("Client exception(sendBallot() could not find stub): " + e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -141,12 +141,12 @@ public class Account implements AccountInt {
 		if (currentIndex + 1 == sortedIPs.size()) {
 			System.out.println("current index is 0");
 			System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
-			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
+			//System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
 			System.out.println("current index is " + currentIndex + " +1");
 			currentIndex++;
-			System.out.println("sortedIPs.get(currentIndex) " + sortedIPs.get(currentIndex));
+			//System.out.println("sortedIPs.get(currentIndex) " + sortedIPs.get(currentIndex));
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex));
 		}
 	}
@@ -236,6 +236,9 @@ public class Account implements AccountInt {
 		obj.nextStub();
 		
 		System.out.println("the nxt neighbor stub " + obj.nextNeighborStub.toString());
+		if (obj.neighborStubs.contains(obj.nextNeighborStub)){
+			System.out.println("yes, we found a stub");
+		}
 
 		if (args[0].equals("1")) {
 			System.out.println("This process is the leader initiator");
