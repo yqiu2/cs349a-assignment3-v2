@@ -8,9 +8,9 @@ public class Snapshot {
 	HashMap<String, ArrayList<Integer>> snapChannels;
 	HashMap<String, Boolean> recChannels;
 
-	public Snapshot(String ipAddress, int id) {
+	public Snapshot(String ipAddress) {
 		snapBal = -1;
-		snapID = id;
+		snapID = (int)(Math.random() * 99999);
 		//snapID = numSnapshots++;
 		//numSnapshots++;
 		processID = ipAddress;
