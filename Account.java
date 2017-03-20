@@ -307,7 +307,7 @@ public class Account implements AccountInt {
 
 		// check if snapshot storage has snapshots for all
 		System.out.println("checking if snapshot storage has snapshots for all");
-		existingSnaps = globalSnaps.get(snap.getID());
+		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
 		boolean receivedAll = true;
 		for (Snapshot snapfrom : existingSnaps.values()) {
 			if (snapfrom == null) {
