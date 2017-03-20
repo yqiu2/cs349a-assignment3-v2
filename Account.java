@@ -138,7 +138,7 @@ public class Account implements AccountInt {
 			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
-			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
+			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(currentIndex++)).toString());
 
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex++));
 		}
