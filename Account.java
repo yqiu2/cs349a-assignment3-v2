@@ -133,7 +133,7 @@ public class Account implements AccountInt {
 		System.out.println(sortedIPs.toString());
 
 		int currentIndex = sortedIPs.indexOf(localIP);
-		System.out.println("currentIndex is " + currentIndex + "and the size is " + sortedIPs.size());
+		System.out.println("currentIndex is " + currentIndex + " and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
@@ -144,12 +144,14 @@ public class Account implements AccountInt {
 
 	// 4) snapshotting
 	public void receiveStartSnapshot(String leader, String sender, String recipient) {
-		//p
+		//records the state of C as an empty set
+		//execute the marker sending rule
 	}
 
 	public void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) {
-		//process records its state
-		//
+		//Record the state of C as the set of messages received along C after 
+		//pj's state was recorded and before pj received the marker along C
+
 	}
 	
 	public void sendSnapshot(){
