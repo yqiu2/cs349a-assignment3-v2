@@ -143,8 +143,7 @@ public class Account implements AccountInt {
 			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
-			System.out.println("current index is " + currentIndex++);
-			System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(currentIndex++)).toString());
+			System.out.println("current index is " + currentIndex + " +1");
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex++));
 		}
 	}
@@ -225,12 +224,12 @@ public class Account implements AccountInt {
 			}
 		}
 		
-		// add items into hashmap for convenience later
+		// add items into hashmap for convenience 
 		for (int i = 0; i < obj.neighborIPs.size(); i++) {
 			obj.neighbors.put(obj.neighborIPs.get(i), obj.neighborStubs.get(i));
 		}
 
-		// let's find your next neighbor for convenience sake
+		// let's find your next neighbor for #convenience
 		obj.nextStub();
 		
 		System.out.println("the nxt neighbor stub " + obj.nextNeighborStub.toString());
