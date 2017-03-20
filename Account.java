@@ -1,9 +1,14 @@
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.*;
 import java.util.*;
 import java.rmi.server.UnicastRemoteObject;
 
-public class Account implements AccountInt {
+public class Account implements AccountInt, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2440998779580408800L;
 	boolean leaderConfirmed;
 	boolean isLeader;
 	boolean startCommunication;
@@ -130,9 +135,9 @@ public class Account implements AccountInt {
 		numMessagesPassed++;
 		if (candidate.equals(localIP) && leaderConfirmed) {
 			this.isLeader = true;
-			System.out.println("The leader is " + candidate + "!");
+			System.out.println("\n***The leader is " + candidate + "!***");
 			numMessagesPassed--;
-			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
+			System.out.println("\tThis was confirmed after " + numMessagesPassed + " messages were passed.");
 		} else if (candidate.equals(localIP) && !leaderConfirmed) {
 			this.leaderConfirmed = true;
 			System.out.println("the leader is " + candidate + " and I'm sending out the confirmations");
@@ -265,8 +270,9 @@ public class Account implements AccountInt {
 			if (ownSnaps.get(snapID).snapshotFinished()) {
 				try {
 					System.out.println("sending snapshot to " + leader);
-					if (leader.equals(localIP)){
-						// if leader store its own snapshot once its received a snapshot from
+					if (leader.equals(localIP)) {
+						// if leader store its own snapshot once its received a
+						// snapshot from
 						// everyone else
 						if (ownSnaps.get(snapID).snapshotFinished()) {
 							System.out.println("adding leader snapshot into global storage");
@@ -274,13 +280,13 @@ public class Account implements AccountInt {
 							existingSnaps.put(localIP, ownSnaps.get(snapID));
 							globalSnaps.put(snapID, existingSnaps);
 						}
-					}else{
-					AccountInt leaderStub = neighbors.get(leader);
-					//null pointer exception
-					System.out.println("******\n******");
-					System.out.println("snap being sent to leader\n" + ownSnaps.get(snapID));
-					System.out.println("sending to leaderStub which is " + leaderStub);
-					leaderStub.receiveSnapshot(ownSnaps.get(snapID));
+					} else {
+						AccountInt leaderStub = neighbors.get(leader);
+						// null pointer exception
+						System.out.println("******\n******");
+						System.out.println("snap being sent to leader\n" + ownSnaps.get(snapID));
+						System.out.println("sending to leaderStub which is " + leaderStub);
+						leaderStub.receiveSnapshot(ownSnaps.get(snapID));
 					}
 				} catch (Exception e) {
 					System.err.println("error in sending snapshot back to leader in receiveMarker()" + e.toString());
@@ -288,7 +294,7 @@ public class Account implements AccountInt {
 				}
 			}
 		}
-		
+
 	}
 
 	public void receiveSnapshot(Snapshot snap) {
@@ -297,8 +303,6 @@ public class Account implements AccountInt {
 		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
 		existingSnaps.put(snap.getProcessID(), snap);
 		globalSnaps.put(snap.getID(), existingSnaps);
-
-		
 
 		// check if snapshot storage has snapshots for all
 		System.out.println("checking if snapshot storage has snapshots for all");
