@@ -95,14 +95,14 @@ public class Account implements AccountInt {
 	private void sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
 		try {
 			if (nextNeighborStub == null) {
-				// add items into hashmap for convenience 
+				// add items into hashmap for convenience
 				for (int i = 0; i < neighborIPs.size(); i++) {
 					neighbors.put(neighborIPs.get(i), neighborStubs.get(i));
 				}
 				// let's find your next neighbor for #convenience
 				nextStub();
 			}
-			
+
 			AccountInt recipientStub = this.nextNeighborStub;
 			recipientStub.receiveBallot(candidate, numMessagesPassed, leaderConfirmed);
 		} catch (Exception e) {
@@ -111,32 +111,31 @@ public class Account implements AccountInt {
 		}
 	}
 
-	public void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException{
+	public void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException {
 		numMessagesPassed++;
 		if (leaderConfirmed && candidate.equals(localIP)) {
 			System.out.println("The leader is " + candidate + "!");
 			numMessagesPassed--; // ?????????????
 			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
-			
+
 		} else if (candidate.equals(localIP)) {
 			System.out.println("the leader is " + candidate + "and I'm sending out the confirmations");
 			sendBallot(candidate, numMessagesPassed, true);
 		} else { // received candidate != local IP
-			if (candidate.compareTo(localIP) > 0) {
+			if (candidate.compareTo(localIP) >= 0) {
 				// set candidate to be local IP
 				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate" + localIP);
 				sendBallot(localIP, numMessagesPassed, false);
 			} else {
 				// candidate is still candidate
-				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate remains the same");
+				System.out
+						.println("leader not confirmed yet, recieved " + candidate + "new candidate remains the same");
 				sendBallot(candidate, numMessagesPassed, false);
 			}
-			
-			
 		}
 	}
 
-	//helper method to find next neighbor of current IP
+	// helper method to find next neighbor of current IP
 	public void nextStub() {
 		ArrayList<String> sortedIPs = new ArrayList<String>();
 		sortedIPs.addAll(neighborIPs);
@@ -154,36 +153,38 @@ public class Account implements AccountInt {
 		if (currentIndex + 1 == sortedIPs.size()) {
 			System.out.println("current index is 0");
 			System.out.println("sortedIPs.get(0) " + sortedIPs.get(0));
-			//System.out.println("setting nextneighborstub to " + neighbors.get(sortedIPs.get(0)).toString());
+			// System.out.println("setting nextneighborstub to " +
+			// neighbors.get(sortedIPs.get(0)).toString());
 			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
 			System.out.println("current index is " + currentIndex + " +1");
 			currentIndex++;
-			//System.out.println("sortedIPs.get(currentIndex) " + sortedIPs.get(currentIndex));
+			// System.out.println("sortedIPs.get(currentIndex) " +
+			// sortedIPs.get(currentIndex));
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex));
 		}
-		
+
 		System.out.println("the nxt neighbor stub " + nextNeighborStub.toString());
-		if (neighborStubs.contains(nextNeighborStub)){
+		if (neighborStubs.contains(nextNeighborStub)) {
 			System.out.println("yes, we found a stub");
 		}
 	}
 
 	// 4) snapshotting
 	public void receiveStartSnapshot(String leader, String sender, String recipient) {
-		//records the state of C as an empty set
-		//execute the marker sending rule
+		// records the state of C as an empty set
+		// execute the marker sending rule
 	}
 
 	public void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) {
-		//Record the state of C as the set of messages received along C after 
-		//pj's state was recorded and before pj received the marker along C
+		// Record the state of C as the set of messages received along C after
+		// pj's state was recorded and before pj received the marker along C
 
 	}
-	
-	public void sendSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels){
-		//process records its state
-		//sends a marker along C before sending further message down C
+
+	public void sendSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) {
+		// process records its state
+		// sends a marker along C before sending further message down C
 	}
 
 	public static void main(String[] args) {
@@ -202,7 +203,7 @@ public class Account implements AccountInt {
 		}
 
 		obj.localIP = args[1];
-		
+
 		for (int i = 1; i < args.length; i++) {
 			obj.neighborIPs.add(args[i]);
 		}
@@ -230,7 +231,7 @@ public class Account implements AccountInt {
 				e.printStackTrace();
 			}
 		}
-		//remove yourself
+		// remove yourself
 		obj.neighborIPs.remove(0);
 
 		// waiting for start communication
