@@ -412,11 +412,11 @@ public class Account implements AccountInt, Serializable {
 			if (numOps < 3 || !obj.isLeader) {
 				try {
 					obj.sendMoney();
+					numOps++;
 				} catch (Exception e) {
 					System.err.println("error in sendMoney() in main" + e.toString());
 					e.printStackTrace();
 				}
-				numOps++;
 				System.out.println("numOps: " + numOps);
 			} else {
 				// conditional check is leader is localIP, if yes send out
