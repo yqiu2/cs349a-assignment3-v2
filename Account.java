@@ -101,8 +101,8 @@ public class Account implements AccountInt {
 				}
 				// let's find your next neighbor for #convenience
 				nextStub();
-				
 			}
+			
 			AccountInt recipientStub = this.nextNeighborStub;
 			recipientStub.receiveBallot(candidate, numMessagesPassed, leaderConfirmed);
 		} catch (Exception e) {
@@ -124,12 +124,15 @@ public class Account implements AccountInt {
 		} else { // received candidate != local IP
 			if (candidate.compareTo(localIP) > 0) {
 				// set candidate to be local IP
-				candidate = localIP;
+				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate" + localIP);
+				sendBallot(localIP, numMessagesPassed, false);
 			} else {
 				// candidate is still candidate
+				System.out.println("leader not confirmed yet, recieved " + candidate + "new candidate remains the same");
+				sendBallot(candidate, numMessagesPassed, false);
 			}
-			System.out.println("leader not confirmed yet, candidate is " + candidate);
-			sendBallot(candidate, numMessagesPassed, false);
+			
+			
 		}
 	}
 
