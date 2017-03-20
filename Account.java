@@ -95,8 +95,13 @@ public class Account implements AccountInt {
 	private void sendBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) {
 		try {
 			if (nextNeighborStub == null) {
+				// add items into hashmap for convenience 
+				for (int i = 0; i < neighborIPs.size(); i++) {
+					neighbors.put(neighborIPs.get(i), neighborStubs.get(i));
+				}
 				// let's find your next neighbor for #convenience
 				nextStub();
+				
 			}
 			AccountInt recipientStub = this.nextNeighborStub;
 			recipientStub.receiveBallot(candidate, numMessagesPassed, leaderConfirmed);
@@ -236,14 +241,6 @@ public class Account implements AccountInt {
 				e.printStackTrace();
 			}
 		}
-		
-		// add items into hashmap for convenience 
-		for (int i = 0; i < obj.neighborIPs.size(); i++) {
-			obj.neighbors.put(obj.neighborIPs.get(i), obj.neighborStubs.get(i));
-		}
-
-
-		
 
 		if (args[0].equals("1")) {
 			System.out.println("This process is the leader initiator");
