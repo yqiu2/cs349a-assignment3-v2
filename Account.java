@@ -112,10 +112,17 @@ public class Account implements AccountInt {
 	}
 
 	public void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException {
+		try{
+		Thread.sleep(5000);
+		}
+		catch (Exception e) {
+			System.err.println("Sleeping in receiveballot " + e.toString());
+			e.printStackTrace();
+		}
 		numMessagesPassed++;
 		if (leaderConfirmed && candidate.equals(localIP)) {
 			System.out.println("The leader is " + candidate + "!");
-			numMessagesPassed--; // ?????????????
+			numMessagesPassed--;
 			System.out.println("This was confirmed after " + numMessagesPassed + " messages were passed.");
 
 		} else if (candidate.equals(localIP)) {
@@ -165,10 +172,10 @@ public class Account implements AccountInt {
 			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex));
 		}
 
-		System.out.println("the nxt neighbor stub " + nextNeighborStub.toString());
-		if (neighborStubs.contains(nextNeighborStub)) {
-			System.out.println("yes, we found a stub");
-		}
+//		System.out.println("the nxt neighbor stub " + nextNeighborStub.toString());
+//		if (neighborStubs.contains(nextNeighborStub)) {
+//			System.out.println("yes, we found a stub");
+//		}
 	}
 
 	// 4) snapshotting
