@@ -125,7 +125,7 @@ public class Account implements AccountInt {
 	}
 
 	//helper method to find next neighbor of current IP
-	public AccountInt nextIP() {
+	public void nextStub() {
 		ArrayList<String> sortedIPs = new ArrayList<String>();
 		sortedIPs.addAll(0, neighborIPs);
 		sortedIPs.add(localIP);
@@ -136,19 +136,25 @@ public class Account implements AccountInt {
 		System.out.println("currentIndex is " + currentIndex + "and the size is " + sortedIPs.size());
 
 		if (currentIndex + 1 == sortedIPs.size()) {
-			return neighbors.get(sortedIPs.get(0));
+			nextNeighborStub = neighbors.get(sortedIPs.get(0));
 		} else {
-			return neighbors.get(sortedIPs.get(currentIndex++));
+			nextNeighborStub = neighbors.get(sortedIPs.get(currentIndex++));
 		}
 	}
 
 	// 4) snapshotting
 	public void receiveStartSnapshot(String leader, String sender, String recipient) {
-		
+		//p
 	}
 
 	public void receiveSnapshot(String sender, int amount, ArrayList<ArrayList<Integer>> channels) {
-
+		//process records its state
+		//
+	}
+	
+	public void sendSnapshot(){
+		//process records its state
+		//sends a marker along C before sending further message down C
 	}
 
 	public static void main(String[] args) {
@@ -215,7 +221,8 @@ public class Account implements AccountInt {
 		}
 
 		// let's find your next neighbor for convenience sake
-		obj.nextNeighborStub = obj.nextIP();
+		obj.nextStub();
+		System.out.println("the nxt neighbor stub " + obj.nextNeighborStub.toString());
 
 		if (args[0].equals("1")) {
 			System.out.println("This process is the leader initiator");
