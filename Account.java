@@ -416,6 +416,7 @@ public class Account implements AccountInt, Serializable {
 					System.err.println("error in sendMoney() in main" + e.toString());
 					e.printStackTrace();
 				}
+				numOps++;
 			} else {
 				// conditional check is leader is localIP, if yes send out
 				// initSnap()
