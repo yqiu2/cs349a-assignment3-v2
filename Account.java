@@ -277,9 +277,11 @@ public class Account implements AccountInt {
 						if (ownSnaps.get(snapID).snapshotFinished()) {
 							System.out.println("adding leader snapshot into global storage");
 							HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snapID);
+							System.out.println("1");
 							existingSnaps.put(localIP, ownSnaps.get(snapID));
+							System.out.println("2");
 							globalSnaps.put(snapID, existingSnaps);
-							System.out.println("Can we get to here???!");
+							System.out.println("3Can we get to here???!");
 						}
 					} else {
 						AccountInt leaderStub = neighbors.get(leader);
