@@ -184,7 +184,7 @@ public class Account implements AccountInt {
 		// initializing global snapshot storage
 		globalSnaps = new HashMap<Integer, HashMap<String, Snapshot>>();
 		// init new own snapshot
-		Snapshot ownSnap = new Snapshot(this.localIP);
+		Snapshot ownSnap = new Snapshot(this.localIP, (int)(Math.random() * 99999));
 		// snap balance
 		ownSnap.setBal(this.balance);
 		// stores own snap because multiple snaps can occur at once
@@ -225,7 +225,7 @@ public class Account implements AccountInt {
 		// upon receiving first marker
 		if (!ownSnaps.containsKey(snapID)) {
 			// init new own snapshot
-			Snapshot ownSnap = new Snapshot(this.localIP);
+			Snapshot ownSnap = new Snapshot(this.localIP, (int)(Math.random() * 99999));
 			// snap balance
 			ownSnap.setBal(this.balance);
 			// stores own snap because multiple snaps can occur at once

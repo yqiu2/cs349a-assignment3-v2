@@ -1,16 +1,17 @@
 import java.util.*;
 
 public class Snapshot {
-	static int numSnapshots = 0;
-	static int snapID;
+	//static int numSnapshots = 0;
+	int snapID;
 	int snapBal;
 	String processID;
 	HashMap<String, ArrayList<Integer>> snapChannels;
 	HashMap<String, Boolean> recChannels;
 
-	public Snapshot(String ipAddress) {
+	public Snapshot(String ipAddress, int id) {
 		snapBal = -1;
-		snapID = numSnapshots++;
+		snapID = id;
+		//snapID = numSnapshots++;
 		//numSnapshots++;
 		processID = ipAddress;
 		snapChannels = new HashMap<String, ArrayList<Integer>>();
