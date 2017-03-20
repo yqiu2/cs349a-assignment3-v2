@@ -182,7 +182,7 @@ public class Account implements AccountInt {
 		ownSnap.setBal(this.balance);
 		// stores own snap because multiple snaps can occur at once
 		ownSnaps.put(ownSnap.getID(), ownSnap);
-		System.out.println("created, set, and stored own snapshot");
+		System.out.println("created, set, and stored own snapshot" + ownSnap.getID() + ": " );
 
 		for (String neighborIP : neighbors.keySet()) {
 			try {
@@ -278,8 +278,9 @@ public class Account implements AccountInt {
 							System.out.println("adding leader snapshot into global storage");
 							System.out.println(ownSnaps);
 							System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
+							System.out.println("globalSnaps.contain");
 							System.out.println("1");
-							globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
+							globalSnaps.get(snapID).replace(localIP, ownSnaps.get(snapID));
 							System.out.println("3Can we get to here???!");
 						}
 					} else {
@@ -302,9 +303,7 @@ public class Account implements AccountInt {
 	public void receiveSnapshot(Snapshot snap) {
 		System.out.println("leader received snapshot " + snap.getID() + " from " + snap.getProcessID());
 		// store snapshot into globalSnaps
-		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
-		existingSnaps.put(snap.getProcessID(), snap);
-		globalSnaps.put(snap.getID(), existingSnaps);
+		globalSnaps.get(snap.getID()).replace(snap.getProcessID(), snap);
 
 		// check if snapshot storage has snapshots for all
 		System.out.println("checking if snapshot storage has snapshots for all");
