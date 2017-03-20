@@ -279,8 +279,6 @@ public class Account implements AccountInt {
 							System.out.println(ownSnaps);
 							System.out.println("1");
 							globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
-							System.out.println("2");
-							globalSnaps.put(snapID, existingSnaps);
 							System.out.println("3Can we get to here???!");
 						}
 					} else {
