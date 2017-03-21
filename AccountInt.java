@@ -10,6 +10,6 @@ public interface AccountInt extends Remote {
 	// 3) leader election
 	void receiveBallot(String candidate, int numMessagesPassed, boolean leaderConfirmed) throws RemoteException;
 	// 4) snapshotting
-	void receiveMarker(String leader, String sender, int snapID) throws RemoteException;
+	void receiveMarker(String leader, String sender, Integer snapID) throws RemoteException;
 	void receiveSnapshot(Snapshot snap) throws RemoteException;
 }

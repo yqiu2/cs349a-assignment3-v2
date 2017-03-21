@@ -224,7 +224,7 @@ public class Account implements AccountInt {
 
 	}
 
-	public void receiveMarker(String leader, String sender, int snapID) {
+	public void receiveMarker(String leader, String sender, Integer snapID) {
 		System.out.println(localIP + " has received marker from " + sender + "id of " + snapID);
 		// upon receiving first marker
 		if (!ownSnaps.containsKey(snapID)) {

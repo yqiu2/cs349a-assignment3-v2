@@ -7,7 +7,7 @@ public class Snapshot implements Serializable {
 	 */
 	private static final long serialVersionUID = -8251690269021088830L;
 	// static int numSnapshots = 0;
-	int snapID;
+	Integer snapID;
 	int snapBal;
 	String processID;
 	HashMap<String, ArrayList<Integer>> snapChannels;
@@ -15,7 +15,7 @@ public class Snapshot implements Serializable {
 
 	public Snapshot(String ipAddress) {
 		snapBal = -1;
-		snapID = (int) (Math.random() * 99999);
+		snapID = (Integer) (int)(Math.random() * 99999);
 		// snapID = numSnapshots++;
 		// numSnapshots++;
 		processID = ipAddress;
@@ -23,11 +23,11 @@ public class Snapshot implements Serializable {
 		recChannels = new HashMap<String, Boolean>();
 	}
 
-	public int getID() {
+	public Integer getID() {
 		return snapID;
 	}
 
-	public void setID(int id) {
+	public void setID(Integer id) {
 		snapID = id;
 
 	}
