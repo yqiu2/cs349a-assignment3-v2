@@ -12,4 +12,5 @@ public interface AccountInt extends Remote {
 	// 4) snapshotting
 	void receiveMarker(String leader, String sender, Integer snapID) throws RemoteException;
 	void receiveSnapshot(Snapshot snap) throws RemoteException;
+	String ping() throws RemoteException;
 }

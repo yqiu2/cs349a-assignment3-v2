@@ -184,7 +184,7 @@ public class Account implements AccountInt {
 		// stores own snap because multiple snaps can occur at once
 		ownSnaps.put(ownSnap.getID(), ownSnap);
 		System.out.println("created, set, and stored own snapshot" + ownSnap.getID() + ": ");
-		
+
 		for (String neighborIP : neighbors.keySet()) {
 			try {
 				// send markers
@@ -226,14 +226,14 @@ public class Account implements AccountInt {
 
 	public void receiveMarker(String leader, String sender, Integer snapID) {
 		System.out.println(localIP + " has received marker from " + sender + "id of " + snapID);
-		
-		System.out.println("THE SIZE OF NEIGHBORS IS"+ neighbors.size());
-		System.out.println("THE SIZE OF NEIGHBORIPS IS"+ neighborIPs.size());
-		System.out.println("THE SIZE OF NeighborStubs IS"+ neighborStubs.size());
-		
+
+		System.out.println("THE SIZE OF NEIGHBORS IS" + neighbors.size());
+		System.out.println("THE SIZE OF NEIGHBORIPS IS" + neighborIPs.size());
+		System.out.println("THE SIZE OF NeighborStubs IS" + neighborStubs.size());
+
 		if (!ownSnaps.containsKey(snapID)) {// upon receiving first marker
-			System.out.println("RECEIVING MARKER FOR THE FIRST TIME FOR: "+snapID );
-			
+			System.out.println("RECEIVING MARKER FOR THE FIRST TIME FOR: " + snapID);
+
 			// init new own snapshot
 			Snapshot ownSnap = new Snapshot(this.localIP);
 			// snap balance
@@ -244,27 +244,31 @@ public class Account implements AccountInt {
 			ownSnaps.put(snapID, ownSnap);
 
 			for (String neighborIP : neighbors.keySet()) {
+				
+				// send markers to everyone
+				System.out.println("upon receiving snap " + snapID + " sending markers to " + neighborIP + " ");
+				
+				System.out.println("start recording channels");
+				ownSnap.addMessageChannel(neighborIP);
+				// start recording on all neighbors except the one that sent
+				// you the message
+				if (!sender.equals(neighborIP)) {
+					ownSnap.setRecordingState(neighborIP, true);
+				} else {
+					ownSnap.setRecordingState(neighborIP, false);
+				}
 				try {
-					// send markers to everyone
-					System.out.println("upon receiving snap "+snapID+" sending markers to " + neighborIP + " ");
 					AccountInt recipientStub = neighbors.get(neighborIP);
+					System.out.println("pinging "+neighborIP+ ", response: "+ recipientStub.ping());
 					recipientStub.receiveMarker(leader, localIP, snapID);
-
-					System.out.println("start recording channels");
-					ownSnap.addMessageChannel(neighborIP);
-					// start recording on all neighbors except the one that sent you the message
-					if (!sender.equals(neighborIP)) {
-						ownSnap.setRecordingState(neighborIP, true);
-					} else {
-						ownSnap.setRecordingState(neighborIP, false);
-					}
+					
 				} catch (Exception e) {
-					System.err.println("error in sending markers in receiveMarker()" + e.toString());
+					System.err.println("error in sending MARKER to "+neighborIP+" in receiveMarker()" + e.toString());
 					e.printStackTrace();
 				}
 			}
 		} else {
-			System.out.println("RECEIVING MARKER NOT FOR FIRST TIME FOR: "+ snapID);
+			System.out.println("RECEIVING MARKER NOT FOR FIRST TIME FOR: " + snapID);
 			// upon receiving another marker
 			// check if has snapshot
 			// stop recording on sender channel
@@ -272,38 +276,42 @@ public class Account implements AccountInt {
 			// store channel state of sender channel
 			// if all channels have stop recording then send snapshot to leader
 			if (ownSnaps.get(snapID).snapshotFinished()) {
-				try {
-					if (leader.equals(localIP)) {
-						// if leader store its own snapshot once its received a
-						if (ownSnaps.get(snapID).snapshotFinished()) {
-							System.out.println("Leader adding leader snapshot into global storage");
-							System.out.println(ownSnaps);
-							System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
-							System.out.println("1");
 
-							// ????????????????????????????????????????????? why?
-							globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
-							System.out.println("3Can we get to here???!");
-						}
-					} else {
+				if (leader.equals(localIP)) {
+					// if leader store its own snapshot once its received a
+					System.out.println("Leader adding leader snapshot into global storage");
+					System.out.println(ownSnaps);
+					System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
+					System.out.println("1");
+					globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
+					System.out.println("3Can we get to here???!");
+
+				} else {
+					try {
 						AccountInt leaderStub = neighbors.get(leader);
 						// null pointer exception
 						System.out.println("******\n******");
-						System.out.println("snap "+ snapID +" being sent to leader" + leader);
+						System.out.println("snap " + snapID + " being sent to leader" + leader);
 						System.out.println("sending to leaderStub which is " + leaderStub);
-						// ????????????????????????????????????????????????? why?
-						leaderStub.receiveSnapshot(ownSnaps.get(snapID));
+						// ?????????????????????????????????????????????????
+						// why?
+						System.out.println("pinging leaderStub" + leaderStub.ping());
+						  leaderStub.receiveSnapshot(ownSnaps.get(snapID));
+					} catch (Exception e) {
+						System.err.println("error in sending SNAPSHOT back to leader "+leader+" in receiveMarker()" + e.toString());
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					System.err.println("error in sending snapshot back to leader in receiveMarker()" + e.toString());
-					e.printStackTrace();
 				}
+
 			}
 		}
 
 	}
 
+	
 	public void receiveSnapshot(Snapshot snap) {
+		System.out.println("YOU HAVE SUCCESSFULLY CALED RECEIVE SNAPSHOT");
+		
 		System.out.println("leader received snapshot " + snap.getID() + " from " + snap.getProcessID());
 		// store snapshot into globalSnaps
 		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
@@ -326,6 +334,12 @@ public class Account implements AccountInt {
 				System.out.println(snapfrom.toString());
 			}
 		}
+	}
+	
+	public String ping() {
+		System.out.println("oh hi there!");
+		return "Hi! I exist!";
+		
 	}
 
 	public static void main(String[] args) {
@@ -360,7 +374,7 @@ public class Account implements AccountInt {
 						AccountInt remoteStub = (AccountInt) remoteRegistry.lookup("Account");
 						obj.neighborStubs.add(remoteStub);
 						remoteStub.receiveIPs(obj.neighborIPs);
-					} 
+					}
 				}
 				obj.startCommunication = true;
 			} catch (Exception e) {
