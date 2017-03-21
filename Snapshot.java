@@ -79,10 +79,10 @@ public class Snapshot implements Serializable {
 		
 	}
 	public boolean snapshotFinished() {
-		System.out.println("in Snapshot Class SnapshotFinished()");
+		//System.out.println("in Snapshot Class SnapshotFinished()");
 		for ( String channel : recChannels.keySet()) {
 			boolean recordState = recChannels.get(channel);
-			System.out.println("chan:" + channel + ": " + recordState);
+			//System.out.println("chan:" + channel + ": " + recordState);
 			if (recordState == true) {
 				return false;
 			}
