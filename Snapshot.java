@@ -46,6 +46,7 @@ public class Snapshot implements Serializable {
 
 	// recording Channel STORES MESSAGES
 	public void addMessageChannel(String key) {
+		System.out.println("in Snapshot Class initing message channel" + key);
 		ArrayList<Integer> value = new ArrayList<Integer>();
 		snapChannels.put(key, value);
 	}
@@ -60,6 +61,8 @@ public class Snapshot implements Serializable {
 
 	// Channel State STORE STATE
 	public void addChannelState(String key, Boolean value) {
+		System.out.println("in Snapshot Class initing channel state " + key);
+
 		recChannels.put(key, value);
 	}
 
@@ -70,7 +73,11 @@ public class Snapshot implements Serializable {
 	public HashMap<String, Boolean> getChannelState() {
 		return recChannels;
 	}
-
+	
+	public boolean getChannelState(String channel) {
+		return recChannels.get(channel);
+		
+	}
 	public boolean snapshotFinished() {
 		for (Boolean recordState : recChannels.values()) {
 			if (recordState == true) {

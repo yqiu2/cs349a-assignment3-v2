@@ -1,4 +1,3 @@
-
 import java.rmi.RemoteException;
 import java.rmi.registry.*;
 import java.util.*;
@@ -70,6 +69,11 @@ public class Account implements AccountInt {
 		System.out.println("You've received $" + amount + " from " + senderIP + ": ");
 		balance += amount;
 		System.out.println("\tYour new balance is $" + balance);
+		for (Integer snapshotID : ownSnaps.keySet()) {
+			if (ownSnaps.get(snapshotID).getChannelState(senderIP)) {
+				ownSnaps.get(snapshotID).addMessages(senderIP, amount);
+			}
+		}
 	}
 
 	private void sendMoney() throws RemoteException {
@@ -95,6 +99,7 @@ public class Account implements AccountInt {
 			System.out.println("\t this account balance is $" + balance);
 		}
 		// }
+
 	}
 
 	// 3) leader election
@@ -182,7 +187,7 @@ public class Account implements AccountInt {
 		ownSnap.setBal(this.balance);
 		// stores own snap because multiple snaps can occur at once
 		ownSnaps.put(ownSnap.getID(), ownSnap);
-		System.out.println("created, set, and stored own snapshot" + ownSnap.getID() + ": " );
+		System.out.println("created, set, and stored own snapshot" + ownSnap.getID() + ": ");
 
 		for (String neighborIP : neighbors.keySet()) {
 			try {
@@ -201,9 +206,8 @@ public class Account implements AccountInt {
 			}
 		}
 
-		
 		System.out.println("Initializing global snapshot storage");
-		
+
 		HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
 		for (String neighborIP : neighborIPs) {
 			channelSnapshots.put(neighborIP, null);
@@ -212,7 +216,7 @@ public class Account implements AccountInt {
 		// adding the snapshot to the global snapshot storage
 		System.out.println("adding the snapshot to the global snapshot storage");
 		globalSnaps.put(ownSnap.getID(), channelSnapshots);
-		System.out.println("initialized global snapshots to be: "+ globalSnaps.toString());
+		System.out.println("initialized global snapshots to be: " + globalSnaps.toString());
 		// }
 
 		try {
@@ -270,7 +274,7 @@ public class Account implements AccountInt {
 			// if all channels have stop recording then send snapshot to leader
 			if (ownSnaps.get(snapID).snapshotFinished()) {
 				try {
-						if (leader.equals(localIP)) {
+					if (leader.equals(localIP)) {
 						// if leader store its own snapshot once its received a
 						// snapshot from
 						// everyone else
