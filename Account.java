@@ -284,6 +284,7 @@ public class Account implements AccountInt {
 					System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
 					System.out.println("1");
 					globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
+					//throwing null pointer exception and we don't know why
 					System.out.println("3Can we get to here???!");
 
 				} else {
@@ -315,6 +316,7 @@ public class Account implements AccountInt {
 		System.out.println("leader received snapshot " + snap.getID() + " from " + snap.getProcessID());
 		// store snapshot into globalSnaps
 		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
+		//throws null pointer exception and we don't know why
 		existingSnaps.put(snap.getProcessID(), snap);
 		globalSnaps.put(snap.getID(), existingSnaps);
 
