@@ -187,6 +187,8 @@ public class Account implements AccountInt {
 		HashMap<String, String> channelSnapshots = new HashMap<String, String>();
 		for (String neighborIP : neighborIPs) {
 			channelSnapshots.put(neighborIP, null);
+			ownSnap.addMessageChannel(neighborIP);
+			
 		}
 		channelSnapshots.put(localIP, null);
 		// adding the snapshot to the global snapshot storage
@@ -197,16 +199,13 @@ public class Account implements AccountInt {
 		
 		for (String neighborIP : neighbors.keySet()) {
 			try {
+				// start recording channel
+				System.out.println("start recording channels");
+				ownSnap.setRecordingState(neighborIP, true);
 				// send markers
 				System.out.println("initially sending markers to " + neighborIP + " to start snap: " + ownSnap.getID());
 				AccountInt recipientStub = neighbors.get(neighborIP);
 				recipientStub.receiveMarker(localIP, localIP, ownSnap.getID());
-				// start recording channel
-				System.out.println("start recording channels");
-
-				ownSnap.addMessageChannel(neighborIP);
-				ownSnap.setRecordingState(neighborIP, true);
-
 			} catch (Exception e) {
 				System.err.println("error in sending markers in initSnap()" + e.toString());
 				e.printStackTrace();
@@ -377,7 +376,7 @@ public class Account implements AccountInt {
 		int numOps = 0;
 
 		while (true) {
-			if (numOps < 1 || !obj.isLeader) {
+			if (numOps < 2 || !obj.isLeader) {
 				try {
 					obj.sendMoney();
 					numOps++;
