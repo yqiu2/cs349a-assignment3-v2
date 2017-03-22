@@ -18,7 +18,7 @@ public class Account implements AccountInt {
 	int balance;
 	String localIP;
 
-	HashMap<Integer, HashMap<String, Snapshot>> globalSnaps;
+	HashMap<Integer, HashMap<String, String>> globalSnaps;
 	HashMap<Integer, Snapshot> ownSnaps;
 
 	public Account() {
@@ -32,6 +32,7 @@ public class Account implements AccountInt {
 		balance = 200;
 		nextNeighborStub = null;
 		ownSnaps = new HashMap<Integer, Snapshot>();
+		globalSnaps = new HashMap<Integer, HashMap<String, String>>();
 
 	}
 
@@ -176,7 +177,7 @@ public class Account implements AccountInt {
 		// while (true) {
 
 		// initializing global snapshot storage
-		globalSnaps = new HashMap<Integer, HashMap<String, Snapshot>>();
+		globalSnaps = new HashMap<Integer, HashMap<String, String>>();
 		// init new own snapshot
 		Snapshot ownSnap = new Snapshot(this.localIP);
 		// snap balance
@@ -204,7 +205,7 @@ public class Account implements AccountInt {
 
 		System.out.println("Initializing global snapshot storage");
 
-		HashMap<String, Snapshot> channelSnapshots = new HashMap<String, Snapshot>();
+		HashMap<String, String> channelSnapshots = new HashMap<String, String>();
 		for (String neighborIP : neighborIPs) {
 			channelSnapshots.put(neighborIP, null);
 		}
@@ -279,11 +280,13 @@ public class Account implements AccountInt {
 
 				if (leader.equals(localIP)) {
 					// if leader store its own snapshot once its received a
-					System.out.println("Leader adding leader snapshot into global storage");
-					System.out.println(ownSnaps);
-					System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
-					System.out.println("1");
-					globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID));
+//					System.out.println("***********\n");
+//					System.out.println("Leader adding leader snapshot into global storage");
+//					System.out.println(ownSnaps);
+//					System.out.println("this is snap" + snapID + ":" + ownSnaps.get(snapID));
+//					System.out.println("globalSnaps.get(snapID): " + globalSnaps.get(snapID));
+//					System.out.println("1");
+					globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID).toString());
 					//throwing null pointer exception and we don't know why
 					System.out.println("3Can we get to here???!");
 
@@ -297,7 +300,7 @@ public class Account implements AccountInt {
 						// ?????????????????????????????????????????????????
 						// why?
 						System.out.println("pinging leaderStub" + leaderStub.ping());
-						  leaderStub.receiveSnapshot(ownSnaps.get(snapID));
+						  leaderStub.receiveSnapshot(snapID, localIP, ownSnaps.get(snapID).toString());
 					} catch (Exception e) {
 						System.err.println("error in sending SNAPSHOT back to leader "+leader+" in receiveMarker()" + e.toString());
 						e.printStackTrace();
@@ -310,21 +313,24 @@ public class Account implements AccountInt {
 	}
 
 	
-	public void receiveSnapshot(Snapshot snap) {
+	public void receiveSnapshot(Integer snapID, String sender, String snap) {
+		//public void receiveSnapshot(String info) {
+
 		System.out.println("YOU HAVE SUCCESSFULLY CALED RECEIVE SNAPSHOT");
 		
-		System.out.println("leader received snapshot " + snap.getID() + " from " + snap.getProcessID());
+		//System.out.println("leader received snapshot " + snap.getID() + " from " + snap.getProcessID());
 		// store snapshot into globalSnaps
-		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
-		//throws null pointer exception and we don't know why
-		existingSnaps.put(snap.getProcessID(), snap);
-		globalSnaps.put(snap.getID(), existingSnaps);
+//		HashMap<String, Snapshot> existingSnaps = globalSnaps.get(snap.getID());
+//		//throws null pointer exception and we don't know why
+//		existingSnaps.put(snap.getProcessID(), snap);
+//		globalSnaps.put(snap.getID(), existingSnaps);
+		globalSnaps.get(snapID).put(sender, snap);
 
 		// check if snapshot storage has snapshots for all
 		System.out.println("checking if snapshot storage has snapshots for all");
-		existingSnaps = globalSnaps.get(snap.getID());
+		HashMap<String, String> existingSnaps = globalSnaps.get(snapID);
 		boolean receivedAll = true;
-		for (Snapshot snapfrom : existingSnaps.values()) {
+		for (String snapfrom : existingSnaps.values()) {
 			if (snapfrom == null) {
 				receivedAll = false;
 			}
@@ -332,7 +338,7 @@ public class Account implements AccountInt {
 		// if all snapshots are received then we can print out snapshots
 		if (receivedAll && this.isLeader) {
 			System.out.println("all snapshots have been received");
-			for (Snapshot snapfrom : existingSnaps.values()) {
+			for (String snapfrom : existingSnaps.values()) {
 				System.out.println(snapfrom.toString());
 			}
 		}
