@@ -93,19 +93,6 @@ public class Snapshot implements Serializable {
 		}
 		return true;
 	}
-	
-	public String channelString(){
-		String s = "";
-		for (String chan : snapChannels.keySet()) {
-			s += "Channel " + chan + " to " + processID + " messages :";
-			ArrayList<Integer> messages = snapChannels.get(chan);
-			for (int i = 0; i < messages.size(); i++) {
-				s += "$" + messages.get(i) + " ";
-			}
-			s += "\n";
-		}
-		return s;
-	}
 
 	public String toString() {
 		String s = "";

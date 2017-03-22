@@ -174,10 +174,7 @@ public class Account implements AccountInt {
 
 	// only run if leader
 	private void initSnap() {
-		// while (true) {
 
-		// initializing global snapshot storage
-		// globalSnaps = new HashMap<Integer, HashMap<String, String>>();
 		// init new own snapshot
 		Snapshot ownSnap = new Snapshot(this.localIP);
 		// snap balance
@@ -195,7 +192,6 @@ public class Account implements AccountInt {
 		// adding the snapshot to the global snapshot storage
 		System.out.println("adding the snapshot to the global snapshot storage");
 		globalSnaps.put(ownSnap.getID(), channelSnapshots);
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println("initialized global snapshots to be: " + globalSnaps.toString());
 		
 		
@@ -230,12 +226,8 @@ public class Account implements AccountInt {
 	public void receiveMarker(String leader, String sender, Integer snapID) {
 		System.out.println(localIP + " has received marker from " + sender + "id of " + snapID);
 
-		System.out.println("THE SIZE OF NEIGHBORS IS" + neighbors.size());
-		System.out.println("THE SIZE OF NEIGHBORIPS IS" + neighborIPs.size());
-		System.out.println("THE SIZE OF NeighborStubs IS" + neighborStubs.size());
-
 		if (!ownSnaps.containsKey(snapID)) {// upon receiving first marker
-			System.out.println("RECEIVING MARKER FOR THE FIRST TIME FOR: " + snapID);
+			System.out.println("Receiving marker for the first time for: " + snapID);
 
 			// init new own snapshot
 			Snapshot ownSnap = new Snapshot(this.localIP);
@@ -250,7 +242,6 @@ public class Account implements AccountInt {
 
 				// send markers to everyone
 				System.out.println("upon receiving snap " + snapID + " sending markers to " + neighborIP + " ");
-
 				System.out.println("start recording channels");
 				ownSnap.addMessageChannel(neighborIP);
 				// start recording on all neighbors except the one that sent
@@ -262,9 +253,7 @@ public class Account implements AccountInt {
 				}
 				try {
 					AccountInt recipientStub = neighbors.get(neighborIP);
-					System.out.println("pinging " + neighborIP + ", response: " + recipientStub.ping());
 					recipientStub.receiveMarker(leader, localIP, snapID);
-
 				} catch (Exception e) {
 					System.err
 							.println("error in sending MARKER to " + neighborIP + " in receiveMarker()" + e.toString());
@@ -272,7 +261,7 @@ public class Account implements AccountInt {
 				}
 			}
 		} else {
-			System.out.println("RECEIVING MARKER NOT FOR FIRST TIME FOR: " + snapID);
+			System.out.println("Receiving marker for the first time for: " + snapID);
 			// upon receiving another marker
 			// check if has snapshot
 			// stop recording on sender channel
@@ -280,39 +269,11 @@ public class Account implements AccountInt {
 			// store channel state of sender channel
 			// if all channels have stop recording then send snapshot to leader
 			if (ownSnaps.get(snapID).snapshotFinished()) {
-
 				if (leader.equals(localIP)) {
-					// if leader store its own snapshot once its received a
-					// System.out.println("***********\n");
-					// System.out.println("Leader adding leader snapshot into
-					// global storage");
-					// System.out.println(ownSnaps);
-					// System.out.println("this is snap" + snapID + ":" +
-					// ownSnaps.get(snapID));
-					// System.out.println("globalSnaps.get(snapID): " +
-					// globalSnaps.get(snapID));
-					// System.out.println("1");
-
-					System.out.println("????????????????????????????????");
-					System.out.println("is GlobalSnaps null?" + globalSnaps);
-					System.out.println("is GlobalSnaps.get(snapID) null?" + globalSnaps.get(snapID));
-					System.out.println("is ownSnaps null?" + ownSnaps);
-					System.out.println("is ownSnaps.get(snapID) null?" + ownSnaps.get(snapID));
-					
 					globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID).toString());
-					// throwing null pointer exception and we don't know why
-					System.out.println("3Can we get to here???!");
-
 				} else {
 					try {
 						AccountInt leaderStub = neighbors.get(leader);
-						// null pointer exception
-						System.out.println("******\n******");
-						System.out.println("snap " + snapID + " being sent to leader" + leader);
-						System.out.println("sending to leaderStub which is " + leaderStub);
-						// ?????????????????????????????????????????????????
-						// why?
-						System.out.println("pinging leaderStub" + leaderStub.ping());
 						leaderStub.receiveSnapshot(snapID, localIP, ownSnaps.get(snapID).toString());
 					} catch (Exception e) {
 						System.err.println("error in sending SNAPSHOT back to leader " + leader + " in receiveMarker()"
@@ -320,35 +281,14 @@ public class Account implements AccountInt {
 						e.printStackTrace();
 					}
 				}
-
 			}
 		}
-
 	}
 
 	public void receiveSnapshot(Integer snapID, String sender, String snap) {
-		// public void receiveSnapshot(String info) {
-
-		System.out.println("YOU HAVE SUCCESSFULLY CALED RECEIVE SNAPSHOT");
-
-		// System.out.println("leader received snapshot " + snap.getID() + "
-		// from " + snap.getProcessID());
-		// store snapshot into globalSnaps
-		// HashMap<String, Snapshot> existingSnaps =
-		// globalSnaps.get(snap.getID());
-		// //throws null pointer exception and we don't know why
-		// existingSnaps.put(snap.getProcessID(), snap);
-		// globalSnaps.put(snap.getID(), existingSnaps);
-		
-		
-		System.out.println("????????????????????????????????");
-		System.out.println("is GlobalSnaps null?" + globalSnaps);
-		System.out.println("is GlobalSnaps.get(snapID) null?" + globalSnaps.get(snapID));
-		
 		globalSnaps.get(snapID).put(sender, snap);
-		// NULL POINTER EXCEPTION
 		// check if snapshot storage has snapshots for all
-		System.out.println("checking if snapshot storage has snapshots for all");
+		System.out.println("Checking if snapshot storage has snapshots for all");
 		HashMap<String, String> existingSnaps = globalSnaps.get(snapID);
 		boolean receivedAll = true;
 		for (String snapfrom : existingSnaps.values()) {
@@ -363,12 +303,6 @@ public class Account implements AccountInt {
 				System.out.println(snapfrom.toString());
 			}
 		}
-	}
-
-	public String ping() {
-		System.out.println("oh hi there!");
-		return "Hi! I exist!";
-
 	}
 
 	public static void main(String[] args) {
