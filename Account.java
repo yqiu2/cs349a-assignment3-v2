@@ -212,15 +212,6 @@ public class Account implements AccountInt {
 				e.printStackTrace();
 			}
 		}
-
-		
-		try {
-			System.out.println("Sleeping for 55 seconds");
-			Thread.sleep(55000);
-		} catch (Exception e) {
-			System.out.println("apparently sleep needs a try catch in initSnap();");
-		}
-
 	}
 
 	public void receiveMarker(String leader, String sender, Integer snapID) {
