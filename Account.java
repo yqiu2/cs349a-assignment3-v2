@@ -186,6 +186,19 @@ public class Account implements AccountInt {
 		ownSnaps.put(ownSnap.getID(), ownSnap);
 		System.out.println("created, set, and stored own snapshot" + ownSnap.getID() + ": ");
 
+		System.out.println("Initializing global snapshot storage");
+		HashMap<String, String> channelSnapshots = new HashMap<String, String>();
+		for (String neighborIP : neighborIPs) {
+			channelSnapshots.put(neighborIP, null);
+		}
+		channelSnapshots.put(localIP, null);
+		// adding the snapshot to the global snapshot storage
+		System.out.println("adding the snapshot to the global snapshot storage");
+		globalSnaps.put(ownSnap.getID(), channelSnapshots);
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("initialized global snapshots to be: " + globalSnaps.toString());
+		
+		
 		for (String neighborIP : neighbors.keySet()) {
 			try {
 				// send markers
@@ -204,19 +217,7 @@ public class Account implements AccountInt {
 			}
 		}
 
-		System.out.println("Initializing global snapshot storage");
-
-		HashMap<String, String> channelSnapshots = new HashMap<String, String>();
-		for (String neighborIP : neighborIPs) {
-			channelSnapshots.put(neighborIP, null);
-		}
-		channelSnapshots.put(localIP, null);
-		// adding the snapshot to the global snapshot storage
-		System.out.println("adding the snapshot to the global snapshot storage");
-		globalSnaps.put(ownSnap.getID(), channelSnapshots);
-		System.out.println("initialized global snapshots to be: " + globalSnaps.toString());
-		// }
-
+		
 		try {
 			System.out.println("Sleeping for 55 seconds");
 			Thread.sleep(55000);
@@ -291,6 +292,13 @@ public class Account implements AccountInt {
 					// System.out.println("globalSnaps.get(snapID): " +
 					// globalSnaps.get(snapID));
 					// System.out.println("1");
+
+					System.out.println("????????????????????????????????");
+					System.out.println("is GlobalSnaps null?" + globalSnaps);
+					System.out.println("is GlobalSnaps.get(snapID) null?" + globalSnaps.get(snapID));
+					System.out.println("is ownSnaps null?" + ownSnaps);
+					System.out.println("is ownSnaps.get(snapID) null?" + ownSnaps.get(snapID));
+					
 					globalSnaps.get(snapID).put(localIP, ownSnaps.get(snapID).toString());
 					// throwing null pointer exception and we don't know why
 					System.out.println("3Can we get to here???!");
@@ -331,6 +339,12 @@ public class Account implements AccountInt {
 		// //throws null pointer exception and we don't know why
 		// existingSnaps.put(snap.getProcessID(), snap);
 		// globalSnaps.put(snap.getID(), existingSnaps);
+		
+		
+		System.out.println("????????????????????????????????");
+		System.out.println("is GlobalSnaps null?" + globalSnaps);
+		System.out.println("is GlobalSnaps.get(snapID) null?" + globalSnaps.get(snapID));
+		
 		globalSnaps.get(snapID).put(sender, snap);
 		// NULL POINTER EXCEPTION
 		// check if snapshot storage has snapshots for all
